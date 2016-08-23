@@ -1,0 +1,43 @@
+0T (Run 2015 startup)
+
+Generror files
+
+generror_summary_zp1275.out
+generror_summary_zp1276.out
+
+BPix [layer][module] 
+
+    bptmp[0][0] = 1276;
+    bptmp[0][1] = 1276;
+    bptmp[0][2] = 1276;
+    bptmp[0][3] = 1276;
+    bptmp[0][4] = 1276;
+    bptmp[0][5] = 1276;
+    bptmp[0][6] = 1276;
+    bptmp[0][7] = 1276;
+    bptmp[1][0] = 1276;
+    bptmp[1][1] = 1276;
+    bptmp[1][2] = 1276;
+    bptmp[1][3] = 1276;
+    bptmp[1][4] = 1276;
+    bptmp[1][5] = 1276;
+    bptmp[1][6] = 1276;
+    bptmp[1][7] = 1276;
+    bptmp[2][0] = 1276;
+    bptmp[2][1] = 1276;
+    bptmp[2][2] = 1276;
+    bptmp[2][3] = 1276;
+    bptmp[2][4] = 1276;
+    bptmp[2][5] = 1276;
+    bptmp[2][6] = 1276;
+    bptmp[2][7] = 1276;
+
+    
+FPix
+
+plaquettes 1 = 1275
+plaquettes 2 = 1275
+plaquettes 3-4 = 1275
+
+All new modules are mapped to 1276
+

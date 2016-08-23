@@ -1,0 +1,142 @@
+import FWCore.ParameterSet.Config as cms
+import sys
+
+process = cms.Process("SiPixelGenErrorDBUpload")
+process.load("CondCore.DBCommon.CondDBCommon_cfi")
+process.load("FWCore.MessageService.MessageLogger_cfi")
+
+process.load("Configuration.StandardSequences.GeometryDB_cff")
+#process.load("Geometry.TrackerGeometryBuilder.trackerGeometry_cfi")
+process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
+process.GlobalTag.globaltag = "80X_dataRun2_Prompt_v8"
+#process.GlobalTag.globaltag = "START71_V1::All"
+
+MagFieldValue = float(sys.argv[2])
+
+print '\nMagField = %f \n' % (MagFieldValue)
+#version = 'v2'
+version = sys.argv[3]
+
+file_path = "CondTools/SiPixel/generr_data/generror_summary_"
+suffix = ".out"
+MagFieldString = '3p8'
+files_to_upload = cms.vstring(
+	file_path + "zp5600" + suffix,
+	file_path + "zp5700" + suffix,
+	file_path + "zp6401" + suffix,
+	file_path + "zp6501" + suffix,
+	file_path + "zp4802" + suffix,
+	file_path + "zp4902" + suffix,
+	file_path + "zp6483" + suffix,
+	file_path + "zp4884" + suffix,
+	file_path + "zp4885" + suffix,
+	file_path + "zp1006" + suffix,)
+   
+theGenErrorIds = cms.vuint32(
+							# IN THE BARREL:
+						5700, # Position 0: Layer 1, Mod 1
+						5700, # Position 1: Layer 1, Mod 2
+						5700, # Position 2: Layer 1, Mod 3
+						5700, # Position 3: Layer 1, Mod 4
+						5600, # Position 4: Layer 1, Mod 5
+						5600, # Position 5: Layer 1, Mod 6
+						5600, # Position 6: Layer 1, Mod 7
+						5600, # Position 7: Layer 1, Mod 8
+						6501, # Position 8: Layer 2, Mod 1
+						6501, # Position 9: Layer 2, Mod 2
+						6501, # Position 10: Layer 2, Mod 3
+						6501, # Position 11: Layer 2, Mod 4
+						6401, # Position 12: Layer 2, Mod 5
+						6401, # Position 13: Layer 2, Mod 6
+						6401, # Position 14: Layer 2, Mod 7
+						6401, # Position 15: Layer 2, Mod 8
+						4902, # Position 16: Layer 3, Mod 1
+						4902, # Position 17:Layer 3, Mod 2
+						4902, # Position 18:Layer 3, Mod 3
+						4902, # Position 19:Layer 3, Mod 4
+						4802, # Position 20:Layer 3, Mod 5
+						4802, # Position 21:Layer 3, Mod 6
+						4802, # Position 22:Layer 3, Mod 7
+						4802, # Position 23:Layer 3, Mod 8
+							# IN THE ENDCAPS:
+						6483, # Position 24: Side 1, Disk 1, Panel 1, Mod 1
+						4884, # Position 25: Side 1, Disk 1, Panel 1, Mod 2
+						4885, # Position 26: Side 1, Disk 1, Panel 1, Mod 3
+						4885, # Position 27: Side 1, Disk 1, Panel 1, Mod 4
+						6483, # Position 28: Side 1, Disk 1, Panel 2, Mod 1
+						4884, # Position 29: Side 1, Disk 1, Panel 2, Mod 2
+						4885, # Position 30: Side 1, Disk 1, Panel 2, Mod 3
+						6483, # Position 31: Side 1, Disk 2, Panel 1, Mod 1
+						4884, # Position 32: Side 1, Disk 2, Panel 1, Mod 2
+						4885, # Position 33: Side 1, Disk 2, Panel 1, Mod 3
+						4885, # Position 34: Side 1, Disk 2, Panel 1, Mod 4
+						6483, # Position 35: Side 1, Disk 2, Panel 2, Mod 1
+						4884, # Position 36: Side 1, Disk 2, Panel 2, Mod 2
+						4885, # Position 37: Side 1, Disk 2, Panel 2, Mod 3
+						6483, # Position 38: Side 2, Disk 1, Panel 1, Mod 1
+						4884, # Position 39: Side 2, Disk 1, Panel 1, Mod 2
+						4885, # Position 40: Side 2, Disk 1, Panel 1, Mod 3
+						4885, # Position 41: Side 2, Disk 1, Panel 1, Mod 4
+						6483, # Position 42: Side 2, Disk 1, Panel 2, Mod 1
+						4884, # Position 43: Side 2, Disk 1, Panel 2, Mod 2
+						4885, # Position 44: Side 2, Disk 1, Panel 2, Mod 3
+						6483, # Position 45: Side 2, Disk 2, Panel 1, Mod 1
+						4884, # Position 46: Side 2, Disk 2, Panel 1, Mod 2
+						4885, # Position 47: Side 2, Disk 2, Panel 1, Mod 3
+						4885, # Position 48: Side 2, Disk 2, Panel 1, Mod 4
+						6483, # Position 49: Side 2, Disk 2, Panel 2, Mod 1
+						4884, # Position 50: Side 2, Disk 2, Panel 2, Mod 2
+						4885, # Position 51: Side 2, Disk 2, Panel 2, Mod 3
+							# NEW MODULES:
+						1006,  # Position 52: Will fill list of "replaced" pixels, layer 1
+						1006,  # Position 53: Will fill list of "replaced" pixels, layer 2
+						1006  # Position 54: Will fill list of "replaced" pixels, layer 3
+	)
+
+
+
+
+generror_base = 'SiPixelGenErrorDBObject' + MagFieldString + version
+#theGenErrorBaseString = cms.string(generic_base)
+
+print '\nUploading %s with record SiPixelGenErrorDBObjectRcd in file siPixelGenErrors%s%s.db\n' % (generror_base,MagFieldString,version)
+
+process.source = cms.Source("EmptyIOVSource",
+                            timetype = cms.string('runnumber'),
+                            firstValue = cms.uint64(1),
+                            lastValue = cms.uint64(1),
+                            interval = cms.uint64(1)
+                            )
+
+process.maxEvents = cms.untracked.PSet(
+    input = cms.untracked.int32(1)
+    )
+
+process.PoolDBOutputService = cms.Service("PoolDBOutputService",
+                                          DBParameters = cms.PSet(
+    messageLevel = cms.untracked.int32(0),
+    authenticationPath = cms.untracked.string('.')
+    ),
+                                          timetype = cms.untracked.string('runnumber'),
+                                          connect = cms.string('sqlite_file:siPixelGenErrorsNM' + MagFieldString + version + '.db'),
+                                          toPut = cms.VPSet(cms.PSet(
+    record = cms.string('SiPixelGenErrorDBObjectRcd'),
+    tag = cms.string(generror_base)
+    ))
+                                          )
+
+process.uploader = cms.EDAnalyzer("SiPixelGenErrorDBObjectUploader",
+                                  siPixelGenErrorCalibrations = files_to_upload,
+                                  theGenErrorBaseString = cms.string(generror_base),
+                                  Version = cms.double("3.0"),
+                                  MagField = cms.double(MagFieldValue),
+                                  generrorIds = theGenErrorIds
+)
+
+
+process.myprint = cms.OutputModule("AsciiOutputModule")
+
+process.p = cms.Path(process.uploader)
+process.CondDBCommon.connect = 'sqlite_file:siPixelGenErrorsNM' + MagFieldString + '.db'
+process.CondDBCommon.DBParameters.messageLevel = 0
+process.CondDBCommon.DBParameters.authenticationPath = './'

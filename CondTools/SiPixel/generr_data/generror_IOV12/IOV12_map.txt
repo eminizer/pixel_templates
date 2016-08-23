@@ -1,0 +1,59 @@
+IOV 12 (Summer 2016)
+
+Generror files
+
+generror_summary_zp4818.out
+generror_summary_zp5611.out
+generror_summary_zp5613.out
+generror_summary_zp5616.out
+generror_summary_zp5711.out
+generror_summary_zp6415.out
+generror_summary_zp6417.out
+generror_summary_zp7612.out
+generror_summary_zp7614.out
+generror_summary_zp7712.out
+generror_summary_zp9410.out
+generror_summary_zp9510.out
+
+
+BPix [layer][module] 
+
+    bptmp[0][0] = 9510;
+    bptmp[0][1] = 9510;
+    bptmp[0][2] = 9510;
+    bptmp[0][3] = 9510;
+    bptmp[0][4] = 9410;
+    bptmp[0][5] = 9410;
+    bptmp[0][6] = 9410;
+    bptmp[0][7] = 9410;
+    bptmp[1][0] = 5711;
+    bptmp[1][1] = 5711;
+    bptmp[1][2] = 5711;
+    bptmp[1][3] = 5711;
+    bptmp[1][4] = 5611;
+    bptmp[1][5] = 5611;
+    bptmp[1][6] = 5611;
+    bptmp[1][7] = 5611;
+    bptmp[2][0] = 7712;
+    bptmp[2][1] = 7712;
+    bptmp[2][2] = 7712;
+    bptmp[2][3] = 7712;
+    bptmp[2][4] = 7612;
+    bptmp[2][5] = 7612;
+    bptmp[2][6] = 7612;
+    bptmp[2][7] = 7612;
+    
+BPix new modules [layers 1,2,3]
+
+   bpnew[0] = 5616;
+   bpnew[1] = 6417;
+   bpnew[2] = 4818;
+
+    
+FPix
+
+plaquettes 1 = 5613
+plaquettes 2 = 7614
+plaquettes 3-4 = 6415
+
+

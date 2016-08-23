@@ -1,0 +1,53 @@
+IOV 10 (150V BPix biases for 2015C)
+
+Generror files
+
+generror_summary_zp5890.out
+generror_summary_zp5990.out
+generror_summary_zp6691.out
+generror_summary_zp6791.out
+generror_summary_zp7092.out
+generror_summary_zp7192.out
+generror_summary_zp6483.out
+generror_summary_zp4884.out
+generror_summary_zp4885.out
+generror_summary_zp1096.out
+
+BPix [layer][module] 
+
+    bptmp[0][0] = 5990;
+    bptmp[0][1] = 5990;
+    bptmp[0][2] = 5990;
+    bptmp[0][3] = 5990;
+    bptmp[0][4] = 5890;
+    bptmp[0][5] = 5890;
+    bptmp[0][6] = 5890;
+    bptmp[0][7] = 5890;
+    bptmp[1][0] = 6791;
+    bptmp[1][1] = 6791;
+    bptmp[1][2] = 6791;
+    bptmp[1][3] = 6791;
+    bptmp[1][4] = 6691;
+    bptmp[1][5] = 6691;
+    bptmp[1][6] = 6691;
+    bptmp[1][7] = 6691;
+    bptmp[2][0] = 7192;
+    bptmp[2][1] = 7192;
+    bptmp[2][2] = 7192;
+    bptmp[2][3] = 7192;
+    bptmp[2][4] = 7092;
+    bptmp[2][5] = 7092;
+    bptmp[2][6] = 7092;
+    bptmp[2][7] = 7092;
+
+    
+FPix
+
+plaquettes 1 = 6483
+plaquettes 2 = 4884
+plaquettes 3-4 = 4885
+
+All new modules are mapped to 1096
+
+
+

@@ -1,0 +1,51 @@
+IOV 9 0T operation (Summer 2015)
+
+Template files
+
+generror_summary_zp9080.out
+generror_summary_zp9180.out
+generror_summary_zp6881.out
+generror_summary_zp6981.out
+generror_summary_zp7282.out
+generror_summary_zp7382.out
+generror_summary_zp6883.out
+generror_summary_zp7284.out
+generror_summary_zp7285.out
+generror_summary_zp1186.out
+
+BPix [layer][module] 
+
+    bptmp[0][0] = 9180;
+    bptmp[0][1] = 9180;
+    bptmp[0][2] = 9180;
+    bptmp[0][3] = 9180;
+    bptmp[0][4] = 9080;
+    bptmp[0][5] = 9080;
+    bptmp[0][6] = 9080;
+    bptmp[0][7] = 9080;
+    bptmp[1][0] = 6981;
+    bptmp[1][1] = 6981;
+    bptmp[1][2] = 6981;
+    bptmp[1][3] = 6981;
+    bptmp[1][4] = 6881;
+    bptmp[1][5] = 6881;
+    bptmp[1][6] = 6881;
+    bptmp[1][7] = 6881;
+    bptmp[2][0] = 7382;
+    bptmp[2][1] = 7382;
+    bptmp[2][2] = 7382;
+    bptmp[2][3] = 7382;
+    bptmp[2][4] = 7282;
+    bptmp[2][5] = 7282;
+    bptmp[2][6] = 7282;
+    bptmp[2][7] = 7282;
+
+    
+FPix
+
+plaquettes 1 = 6883
+plaquettes 2 = 7284
+plaquettes 3-4 = 7285
+
+All new modules are mapped to 1186
+
