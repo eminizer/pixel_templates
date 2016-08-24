@@ -167,8 +167,8 @@ SiPixelGenErrorDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 	edm::ESHandle<TrackerGeometry> pDD;
 	es.get<TrackerDigiGeometryRecord>().get( pDD );
 
-	short generrids[53];
-	for(int k = 0; k < 53; k++){
+	short generrids[55];
+	for(int k = 0; k < 55; k++){
 	generrids[k] = (short) thegenerrids[k];
 	}
 
