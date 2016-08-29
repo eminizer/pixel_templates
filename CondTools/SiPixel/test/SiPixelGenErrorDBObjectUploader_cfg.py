@@ -1,25 +1,49 @@
 import FWCore.ParameterSet.Config as cms
-import sys
+import FWCore.ParameterSet.VarParsing as opts
+
+options = opts.VarParsing ('standard')
+
+options.register('MagField',
+    			 None,
+    			 opts.VarParsing.multiplicity.singleton,
+    			 opts.VarParsing.varType.float,
+    			 'Magnetic field value in Tesla')
+options.register('Version',
+    			 None,
+    			 opts.VarParsing.multiplicity.singleton,
+    			 opts.VarParsing.varType.string,
+    			 'Template DB object version')
+options.register('GenErrFilePath',
+    			 'CondTools/SiPixel/generr_data',
+    			 opts.VarParsing.multiplicity.singleton,
+    			 opts.VarParsing.varType.string,
+    			 'Location of generr files')
+options.register('GlobalTag',
+    			 '80X_dataRun2_Prompt_v8',
+    			 opts.VarParsing.multiplicity.singleton,
+    			 opts.VarParsing.varType.string,
+    			 'Global tag for this run')
+options.parseArguments()
+
+MagFieldValue = 10.*options.MagField #code needs it in deciTesla
+print '\nMagField = %f deciTesla \n'%(MagFieldValue)
+version = options.Version
+print'\nVersion = %s \n'%(version)
+magfieldstrsplit = str(options.MagField).split('.')
+MagFieldString = magfieldstrsplit[0]
+if len(magfieldstrsplit)>1 :
+	MagFieldString+='p'+magfieldstrsplit[1]
 
 process = cms.Process("SiPixelGenErrorDBUpload")
 process.load("CondCore.DBCommon.CondDBCommon_cfi")
 process.load("FWCore.MessageService.MessageLogger_cfi")
-
 process.load("Configuration.StandardSequences.GeometryDB_cff")
 #process.load("Geometry.TrackerGeometryBuilder.trackerGeometry_cfi")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-process.GlobalTag.globaltag = "80X_dataRun2_Prompt_v8"
-#process.GlobalTag.globaltag = "START71_V1::All"
+process.GlobalTag.globaltag = options.GlobalTag
 
-MagFieldValue = float(sys.argv[2])
-
-print '\nMagField = %f \n' % (MagFieldValue)
-#version = 'v2'
-version = sys.argv[3]
-
-file_path = "CondTools/SiPixel/generr_data/generror_summary_"
+prefix = options.GenErrFilePath+'/generror_summary_'
 suffix = ".out"
-MagFieldString = '3p8'
 files_to_upload = cms.vstring(
 	file_path + "zp5600" + suffix,
 	file_path + "zp9510" + suffix,
@@ -31,7 +55,6 @@ files_to_upload = cms.vstring(
 	file_path + "zp6417" + suffix,
 	file_path + "zp4818" + suffix,
 	file_path + "zp1006" + suffix,)
-   
 theGenErrorIds = cms.vuint32(
 							# IN THE BARREL:
 						9510, # Position 0: Layer 1, Mod 1
@@ -93,11 +116,7 @@ theGenErrorIds = cms.vuint32(
 						6415  # Position 54: Will fill list of "replaced" pixels, layer 3
 	)
 
-
-
-
 generror_base = 'SiPixelGenErrorDBObject' + MagFieldString + version
-#theGenErrorBaseString = cms.string(generic_base)
 
 print '\nUploading %s with record SiPixelGenErrorDBObjectRcd in file siPixelGenErrors%s%s.db\n' % (generror_base,MagFieldString,version)
 
@@ -107,35 +126,26 @@ process.source = cms.Source("EmptyIOVSource",
                             lastValue = cms.uint64(1),
                             interval = cms.uint64(1)
                             )
-
-process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(1)
-    )
-
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(1))
 process.PoolDBOutputService = cms.Service("PoolDBOutputService",
-                                          DBParameters = cms.PSet(
-    messageLevel = cms.untracked.int32(0),
-    authenticationPath = cms.untracked.string('.')
-    ),
+                                          DBParameters = cms.PSet(messageLevel = cms.untracked.int32(0),
+    															  authenticationPath = cms.untracked.string('.')
+    															  ),
                                           timetype = cms.untracked.string('runnumber'),
                                           connect = cms.string('sqlite_file:siPixelGenErrorsNM' + MagFieldString + version + '.db'),
-                                          toPut = cms.VPSet(cms.PSet(
-    record = cms.string('SiPixelGenErrorDBObjectRcd'),
-    tag = cms.string(generror_base)
-    ))
+                                          toPut = cms.VPSet(cms.PSet(record = cms.string('SiPixelGenErrorDBObjectRcd'),
+    																 tag = cms.string(generror_base)
+    																 )
+                                          					)
                                           )
-
 process.uploader = cms.EDAnalyzer("SiPixelGenErrorDBObjectUploader",
                                   siPixelGenErrorCalibrations = files_to_upload,
                                   theGenErrorBaseString = cms.string(generror_base),
                                   Version = cms.double("3.0"),
                                   MagField = cms.double(MagFieldValue),
                                   generrorIds = theGenErrorIds
-)
-
-
+								  )
 process.myprint = cms.OutputModule("AsciiOutputModule")
-
 process.p = cms.Path(process.uploader)
 process.CondDBCommon.connect = 'sqlite_file:siPixelGenErrorsNM' + MagFieldString + '.db'
 process.CondDBCommon.DBParameters.messageLevel = 0
