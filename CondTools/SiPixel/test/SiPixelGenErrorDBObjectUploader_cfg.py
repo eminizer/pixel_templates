@@ -1,5 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 import FWCore.ParameterSet.VarParsing as opts
+import csv
 
 options = opts.VarParsing ('standard')
 
@@ -49,6 +50,103 @@ MagFieldString = magfieldstrsplit[0]
 if len(magfieldstrsplit)>1 :
 	MagFieldString+='p'+magfieldstrsplit[1]
 
+#open the map file
+mapfile = open(options.Map,'rUb')
+#read the csv file into a reader
+mapfilereader = csv.reader(mapfile,delimiter=options.Delimiter,quotechar=options.Quotechar)
+#separate into the different sections
+barrel_rule_lines = []; endcap_rule_lines = []
+barrel_exception_lines = []; endcap_exception_lines = []
+sections = [barrel_rule_lines, endcap_rule_lines, barrel_exception_lines, endcap_exception_lines]
+i=0; line = mapfilereader.next()
+for i in range(len(sections)) :
+	while line[0].find('TEMPLATE ID')==-1 : #skip to just before the section of info
+		line=mapfilereader.next()
+	try :
+		line=mapfilereader.next()
+	except StopIteration :
+		print 'Done reading input file'
+		break
+	while line[1]!='' : #add the lines that are the barrel rules
+		sections[i].append(line) 
+		try :
+			line=mapfilereader.next()
+		except StopIteration :
+			print 'Done reading input file'
+			break
+#print 'barrel rules = %s\nendcap rules = %s\nbarrel exceptions = %s\nendcap exceptions = %s'%(barrel_rule_lines,endcap_rule_lines,barrel_exception_lines,endcap_exception_lines) #DEBUG
+#Make the lists of location strings and template IDs
+barrel_locations = []
+barrel_generr_IDs = []
+endcap_locations = []
+endcap_generr_IDs = []
+template_filenames = []
+prefix = options.GenErrFilePath+'/generror_summary_zp'
+suffix = '.out'
+for s in range(len(sections)) :
+	for line in sections[s] :
+	#	print 'reading line: %s'%(line) #DEBUG
+		template_ID = int(line[0])
+		newtemplatefilename = prefix+str(template_ID)+suffix
+		if not newtemplatefilename in template_filenames :
+			template_filenames.append(newtemplatefilename)
+		if s%2==0 :
+			lay, lad, mod = line[1], line[2], line[3]
+	#		print '	lay = %s, lad = %s, mod = %s'%(lay, lad, mod) #DEBUG
+			#barrel ID strings are "layer_ladder_module"
+			laysplit = lay.split('-'); firstlay=int(laysplit[0]); lastlay= int(laysplit[1])+1 if len(laysplit)>1 else firstlay+1
+			for i in range(firstlay,lastlay) :
+				lay_string = str(i)+'_'
+				ladsplit = lad.split('-'); firstlad=int(ladsplit[0]); lastlad= int(ladsplit[1])+1 if len(ladsplit)>1 else firstlad+1
+				for j in range(firstlad,lastlad) :
+					lad_string = lay_string+str(j)+'_'
+					modsplit = mod.split('-'); firstmod=int(modsplit[0]); lastmod= int(modsplit[1])+1 if len(modsplit)>1 else firstmod+1
+					for k in range(firstmod,lastmod) :
+						location_string = lad_string+str(k)
+						if s==0 :
+	#						print '	Adding with location string "%s" and template ID %d'%(location_string,template_ID) #DEBUG
+							barrel_locations.append(location_string)
+							barrel_generr_IDs.append(template_ID)
+						else :
+							location_index = barrel_locations.index(location_string)
+							barrel_generr_IDs[location_index]=template_ID
+		else : 
+			disk, blade, side, panel, plaq = line[1], line[2], line[3], line[4], line[5]
+			#endcap ID strings are "disk_blade_side_panel_plaquette"
+			disksplit = disk.split('-'); firstdisk=int(disksplit[0]); lastdisk = int(disksplit[1])+1 if len(disksplit)>1 else firstdisk+1
+			for i in range(firstdisk,lastdisk) :
+				disk_string = str(i)+'_'
+				bladesplit = blade.split('-'); firstblade=int(bladesplit[0]); lastblade = int(bladesplit[1])+1 if len(bladesplit)>1 else firstblade+1
+				for j in range(firstblade,lastblade) :
+					blade_string = disk_string+str(j)+'_'
+					sidesplit = side.split('-'); firstside=int(sidesplit[0]); lastside = int(sidesplit[1])+1 if len(sidesplit)>1 else firstside+1
+					for k in range(firstside,lastside) :
+						side_string = blade_string+str(k)+'_'
+						panelsplit = panel.split('-'); firstpanel=int(panelsplit[0]); lastpanel = int(panelsplit[1])+1 if len(panelsplit)>1 else firstpanel+1
+						for m in range(firstpanel,lastpanel) :
+							panel_string = side_string+str(m)+'_'
+							plaqsplit = plaq.split('-'); firstplaq=int(plaqsplit[0]); lastplaq = int(plaqsplit[1])+1 if len(plaqsplit)>1 else firstplaq+1
+							for n in range(firstplaq,lastplaq) :
+								location_string = panel_string+str(n)
+								if s==1 :
+									endcap_locations.append(location_string)
+									endcap_generr_IDs.append(template_ID)
+								else :
+									location_index = endcap_locations.index(location_string)
+									endcap_generr_IDs[location_index]=template_ID
+#Debug print out assignments
+#print 'BARREL ASSIGNMENTS:' #DEBUG
+#for i in range(len(barrel_locations)) : #DEBUG
+#	tempid = barrel_generr_IDs[i] #DEBUG
+#	lay, lad, mod = barrel_locations[i].split('_')[0], barrel_locations[i].split('_')[1], barrel_locations[i].split('_')[2] #DEBUG
+#	print '	layer %s, ladder %s, module %s will have template ID %d assigned to it'%(lay,lad,mod,tempid) #DEBUG
+#print 'ENDCAP ASSIGNMENTS:' #DEBUG
+#for i in range(len(endcap_locations)) : #DEBUG
+#	tempid = endcap_generr_IDs[i] #DEBUG
+#	disk, blade, side = endcap_locations[i].split('_')[0], endcap_locations[i].split('_')[1], endcap_locations[i].split('_')[2] #DEBUG
+#	panel, plaq =  endcap_locations[i].split('_')[3], endcap_locations[i].split('_')[4] #DEBUG
+#	print '	disk %s, blade %s, side %s, panel %s, plaquette %s will have template ID %d assigned to it'%(disk,blade,side,panel,plaq,tempid) #DEBUG
+
 process = cms.Process("SiPixelGenErrorDBUpload")
 process.load("CondCore.DBCommon.CondDBCommon_cfi")
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -56,80 +154,6 @@ process.load("Configuration.StandardSequences.GeometryDB_cff")
 #process.load("Geometry.TrackerGeometryBuilder.trackerGeometry_cfi")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.GlobalTag.globaltag = options.GlobalTag
-
-prefix = options.GenErrFilePath+'/generror_summary_'
-suffix = ".out"
-files_to_upload = cms.vstring(
-	prefix + "zp5600" + suffix,
-	prefix + "zp9510" + suffix,
-	prefix + "zp5611" + suffix,
-	prefix + "zp5711" + suffix,
-	prefix + "zp7612" + suffix,
-	prefix + "zp7712" + suffix,
-	prefix + "zp5616" + suffix,
-	prefix + "zp6417" + suffix,
-	prefix + "zp4818" + suffix,
-	prefix + "zp1006" + suffix,)
-theGenErrorIds = cms.vuint32(
-							# IN THE BARREL:
-						9510, # Position 0: Layer 1, Mod 1
-						9510, # Position 1: Layer 1, Mod 2
-						9510, # Position 2: Layer 1, Mod 3
-						9510, # Position 3: Layer 1, Mod 4
-						5600, # Position 4: Layer 1, Mod 5
-						5600, # Position 5: Layer 1, Mod 6
-						5600, # Position 6: Layer 1, Mod 7
-						5600, # Position 7: Layer 1, Mod 8
-						5711, # Position 8: Layer 2, Mod 1
-						5711, # Position 9: Layer 2, Mod 2
-						5711, # Position 10: Layer 2, Mod 3
-						5711, # Position 11: Layer 2, Mod 4
-						5611, # Position 12: Layer 2, Mod 5
-						5611, # Position 13: Layer 2, Mod 6
-						5611, # Position 14: Layer 2, Mod 7
-						5611, # Position 15: Layer 2, Mod 8
-						7712, # Position 16: Layer 3, Mod 1
-						7712, # Position 17:Layer 3, Mod 2
-						7712, # Position 18:Layer 3, Mod 3
-						7712, # Position 19:Layer 3, Mod 4
-						7612, # Position 20:Layer 3, Mod 5
-						7612, # Position 21:Layer 3, Mod 6
-						7612, # Position 22:Layer 3, Mod 7
-						7612, # Position 23:Layer 3, Mod 8
-							# IN THE ENDCAPS:
-						5616, # Position 24: Side 1, Disk 1, Panel 1, Mod 1
-						6417, # Position 25: Side 1, Disk 1, Panel 1, Mod 2
-						4818, # Position 26: Side 1, Disk 1, Panel 1, Mod 3
-						4818, # Position 27: Side 1, Disk 1, Panel 1, Mod 4
-						5616, # Position 28: Side 1, Disk 1, Panel 2, Mod 1
-						6417, # Position 29: Side 1, Disk 1, Panel 2, Mod 2
-						4818, # Position 30: Side 1, Disk 1, Panel 2, Mod 3
-						5616, # Position 31: Side 1, Disk 2, Panel 1, Mod 1
-						6417, # Position 32: Side 1, Disk 2, Panel 1, Mod 2
-						4818, # Position 33: Side 1, Disk 2, Panel 1, Mod 3
-						4818, # Position 34: Side 1, Disk 2, Panel 1, Mod 4
-						5616, # Position 35: Side 1, Disk 2, Panel 2, Mod 1
-						6417, # Position 36: Side 1, Disk 2, Panel 2, Mod 2
-						4818, # Position 37: Side 1, Disk 2, Panel 2, Mod 3
-						5616, # Position 38: Side 2, Disk 1, Panel 1, Mod 1
-						6417, # Position 39: Side 2, Disk 1, Panel 1, Mod 2
-						4818, # Position 40: Side 2, Disk 1, Panel 1, Mod 3
-						4818, # Position 41: Side 2, Disk 1, Panel 1, Mod 4
-						5616, # Position 42: Side 2, Disk 1, Panel 2, Mod 1
-						6417, # Position 43: Side 2, Disk 1, Panel 2, Mod 2
-						4818, # Position 44: Side 2, Disk 1, Panel 2, Mod 3
-						5616, # Position 45: Side 2, Disk 2, Panel 1, Mod 1
-						6417, # Position 46: Side 2, Disk 2, Panel 1, Mod 2
-						4818, # Position 47: Side 2, Disk 2, Panel 1, Mod 3
-						4818, # Position 48: Side 2, Disk 2, Panel 1, Mod 4
-						5616, # Position 49: Side 2, Disk 2, Panel 2, Mod 1
-						6417, # Position 50: Side 2, Disk 2, Panel 2, Mod 2
-						4818, # Position 51: Side 2, Disk 2, Panel 2, Mod 3
-							# NEW MODULES:
-						5613,  # Position 52: Will fill list of "replaced" pixels, layer 1
-						7614,  # Position 53: Will fill list of "replaced" pixels, layer 2
-						6415  # Position 54: Will fill list of "replaced" pixels, layer 3
-	)
 
 generror_base = 'SiPixelGenErrorDBObject' + MagFieldString + version
 
@@ -154,11 +178,14 @@ process.PoolDBOutputService = cms.Service("PoolDBOutputService",
                                           					)
                                           )
 process.uploader = cms.EDAnalyzer("SiPixelGenErrorDBObjectUploader",
-                                  siPixelGenErrorCalibrations = files_to_upload,
+                                  siPixelGenErrorCalibrations = cms.vstring(template_filenames),
                                   theGenErrorBaseString = cms.string(generror_base),
                                   Version = cms.double("3.0"),
                                   MagField = cms.double(MagFieldValue),
-                                  generrorIds = theGenErrorIds
+                                  barrelLocations = cms.vstring(barrel_locations),
+                                  endcapLocations = cms.vstring(endcap_locations),
+                                  barrelGenErrIds = cms.vuint32(barrel_generr_IDs),
+                                  endcapGenErrIds = cms.vuint32(endcap_generr_IDs)
 								  )
 process.myprint = cms.OutputModule("AsciiOutputModule")
 process.p = cms.Path(process.uploader)
