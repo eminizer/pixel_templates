@@ -101,7 +101,6 @@ SiPixelGenErrorDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 	  newmodule[2][42][2] = true;
 	//end list
 
-
 	//--- Make the POOL-ORA object to store the database object
 	SiPixelGenErrorDBObject* obj = new SiPixelGenErrorDBObject;
 
@@ -111,18 +110,14 @@ SiPixelGenErrorDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 	
 	// Set the number of GenErrors to be passed to the dbobject
 	obj->setNumOfTempl(theGenErrorCalibrations.size());
-
 	// Set the version of the GenError dbobject - this is an external parameter
 	obj->setVersion(theVersion);
 
 	// Open the GenError file(s) 
 	for(m=0; m< obj->numOfTempl(); ++m){
-
 		edm::FileInPath file( theGenErrorCalibrations[m].c_str() );
 		tempfile = (file.fullPath()).c_str();
-
 		std::ifstream in_file(tempfile, std::ios::in);
-			
 		if(in_file.is_open()){
 			edm::LogInfo("GenError Info") << "Opened GenError File: " << file.fullPath().c_str();
 
@@ -164,14 +159,18 @@ SiPixelGenErrorDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 		}
 	}
 	
+	//Get the event setup
 	edm::ESHandle<TrackerGeometry> pDD;
 	es.get<TrackerDigiGeometryRecord>().get( pDD );
 
+	//Make a local list of GenError IDs
 	short generrids[55];
 	for(int k = 0; k < 55; k++){
 	generrids[k] = (short) thegenerrids[k];
 	}
+	short thisID = 0000;
 
+	//Loop over detector elements and put the GenError IDs in place
 	for(TrackerGeometry::DetUnitContainer::const_iterator it = pDD->detUnits().begin(); it != pDD->detUnits().end(); it++){
 			if( dynamic_cast<PixelGeomDetUnit const*>((*it))!=0){
 
@@ -180,364 +179,152 @@ SiPixelGenErrorDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 			unsigned int layer=0, ladder=0, disk=0, side=0, blade=0, panel=0, module=0;
 					
 			// Now we sort them into the Barrel and Endcap:
+			//Barrel pixels first
 			if(detid.subdetId() == 1) {
 				std::cout << "--- IN THE BARREL ---\n";
-				PXBDetId pdetId = PXBDetId(detid);
 
+				//Get the layer, ladder, and module corresponding to this DetID
+				PXBDetId pdetId = PXBDetId(detid);
 				layer=pdetId.layer();
 				ladder=pdetId.ladder();
 				module=pdetId.module();
 
+				//Assign template IDs
 				if(detid.subdetId() == static_cast<int>(PixelSubdetector::PixelBarrel)){
-				   if (newmodule[layer-1][ladder-1][module-1]) {
-					 if (layer == 1) {
-						if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[52] ) )
-						std::cout << " Could not fill barrel layer "<<layer<<", ladder "<<ladder<<", module "<<module<<"\n";
+					//If this is a new module use the exceptions
+				   	if (newmodule[layer-1][ladder-1][module-1]) {
+					 	if (layer == 1) { thisID=generrids[52]; } 
+					    else if (layer == 2) { thisID=generrids[53]; } 
+					    else if (layer == 3) { thisID=generrids[54]; } 
+				   	}
+				   	//Otherwise use the defaults
+				   	else {
+						if (layer == 1) {
+							if (module == 1) { thisID=generrids[0]; } 
+							else if (module == 2) { thisID=generrids[1]; } 
+							else if (module == 3) { thisID=generrids[2]; } 
+							else if (module == 4) { thisID=generrids[3]; } 
+							else if (module == 5) { thisID=generrids[4]; } 
+							else if (module == 6) { thisID=generrids[5]; } 
+							else if (module == 7) { thisID=generrids[6]; } 
+							else if (module == 8) { thisID=generrids[7]; } 
 						}
-					    if (layer == 2) {
-						if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[53] ) )
-						std::cout << " Could not fill barrel layer "<<layer<<", ladder "<<ladder<<", module "<<module<<"\n";
+						else if (layer == 2) {
+							if (module == 1) { thisID=generrids[8]; } 
+							else if (module == 2) { thisID=generrids[9]; } 
+							else if (module == 3) { thisID=generrids[10]; } 
+							else if (module == 4) { thisID=generrids[11]; } 
+							else if (module == 5) { thisID=generrids[12]; } 
+							else if (module == 6) { thisID=generrids[13]; } 
+							else if (module == 7) { thisID=generrids[14]; } 
+							else if (module == 8) { thisID=generrids[15]; } 
 						}
-					    if (layer == 3) {
-						if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[54] ) )
-						std::cout << " Could not fill barrel layer "<<layer<<", ladder "<<ladder<<", module "<<module<<"\n";
-						}
-				   }
-				   else {
-					if (layer == 1) {
-						if (module == 1) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[0] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";						
-						}
-						if (module == 2) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[1] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";											
-						}
-						if (module == 3) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[2] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";											
-						}
-						if (module == 4) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[3] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";											
-						}
-						if (module == 5) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[4] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";											
-						}
-						if (module == 6) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[5] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";											
-						}
-						if (module == 7) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[6] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";											
-						}
-						if (module == 8) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[7] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";											
-						}
-					
+						else if (layer == 3) {
+							if (module == 1) { thisID=generrids[16]; } 
+							else if (module == 2) { thisID=generrids[17]; } 
+							else if (module == 3) { thisID=generrids[18]; } 
+							else if (module == 4) { thisID=generrids[19]; } 
+							else if (module == 5) { thisID=generrids[20]; } 
+							else if (module == 6) { thisID=generrids[21]; } 
+							else if (module == 7) { thisID=generrids[22]; } 
+							else if (module == 8) { thisID=generrids[23]; } 
+					   	}
 					}
-					if (layer == 2) {
-						if (module == 1) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[8] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";		
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";											
-						}
-						if (module == 2) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[9] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";											
-						}
-						if (module == 3) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[10] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";											
-						}
-						if (module == 4) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[11] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";											
-						}
-						if (module == 5) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[12] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";											
-						}
-						if (module == 6) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[13] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";											
-						}
-						if (module == 7) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[14] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";											
-						}
-						if (module == 8) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[15] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";										
-						}
-					
-					}
-					if (layer == 3) {
-						if (module == 1) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[16] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";										
-						}
-						if (module == 2) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[17] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";										
-						}
-						if (module == 3) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[18] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";										
-						}
-						if (module == 4) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[19] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";										
-						}
-						if (module == 5) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[20] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";										
-						}
-						if (module == 6) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[21] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";	
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";										
-						}
-						if (module == 7) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[22] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";										
-						}
-						if (module == 8) {
-							if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[23] ) )
-							//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-							std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";									
-						}
-					   }
-					}
-				// ----- debug:
-				std::cout<<"This is a barrel element with: layer "<<layer<<", ladder "<<ladder<<" and module "<<module<<".\n"; //Uncomment to read out exact position of each element.
-				// -----
+
+					if (thisID==0000 || ( ! (*obj).putGenErrorID( detid.rawId(),thisID ) ))
+						std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";
+					// ----- debug:
+					std::cout<<"This is a barrel element with: layer "<<layer<<", ladder "<<ladder<<" and module "<<module<<".\n"; //Uncomment to read out exact position of each element.
+					// -----
 				}
 			}
+			//Now endcaps
 			if(detid.subdetId() == 2) {
-
 				std::cout << "--- IN AN ENDCAP ---\n";
+
+				//Get the DetID's disk, blade, side, panel, and module
 				PXFDetId pdetId = PXFDetId(detid);
 				disk=pdetId.disk(); //1,2,3
-			       	blade=pdetId.blade(); //1-24
-			       	side=pdetId.side(); //size=1 for -z, 2 for +z
-			       	panel=pdetId.panel(); //panel=1,2	
-		        	module=pdetId.module(); // plaquette
+			    blade=pdetId.blade(); //1-24
+			    side=pdetId.side(); //size=1 for -z, 2 for +z
+			    panel=pdetId.panel(); //panel=1,2	
+		       	module=pdetId.module(); // plaquette=1-4
 
-				//short temp123abc = (short) thegenerrids[1];
+				//Assign IDs
 				if(detid.subdetId() == static_cast<int>(PixelSubdetector::PixelEndcap)){
 					if (side ==1 ){
 						if (disk == 1){
 							if(panel == 1){
-								if(module == 1){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[24] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 2){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[25] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 3){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[26] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 4){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[27] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
+								if(module == 1){ thisID=generrids[24]; } 
+								else if(module == 2){ thisID=generrids[25]; } 
+								else if(module == 3){ thisID=generrids[26]; } 
+								else if(module == 4){ thisID=generrids[27]; } 
 							}
-							if(panel == 2){
-								if(module == 1){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[40] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 2){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[41] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 3){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[42] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
+							else if(panel == 2){
+								if(module == 1){ thisID=generrids[40]; } 
+								else if(module == 2){ thisID=generrids[41]; } 
+								else if(module == 3){ thisID=generrids[42]; } 
 							}
 						}
-						if (disk == 2){
+						else if (disk == 2){
 							if(panel == 1){
-								if(module == 1){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[28] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 2){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[29] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 3){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[30] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 4){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[31] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
+								if(module == 1){ thisID=generrids[28]; } 
+								else if(module == 2){ thisID=generrids[29]; } 
+								else if(module == 3){ thisID=generrids[30]; } 
+								else if(module == 4){ thisID=generrids[31]; } 
 							}	
-							if(panel == 2){
-								if(module == 1){
-										if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[43] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 2){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[44] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 3){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[45] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
+							else if(panel == 2){
+								if(module == 1){ thisID=generrids[43]; } 
+								else if(module == 2){ thisID=generrids[44]; } 
+								else if(module == 3){ thisID=generrids[45]; } 
 							}
 						}
 					}						
-					if (side ==2 ){
+					else if (side ==2 ){
 						if (disk == 1){
 							if(panel == 1){
-								if(module == 1){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[32] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 2){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[33] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 3){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[34] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 4){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[35] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
+								if(module == 1){ thisID=generrids[32]; } 
+								else if(module == 2){ thisID=generrids[33]; } 
+								else if(module == 3){ thisID=generrids[34]; } 
+								else if(module == 4){ thisID=generrids[35]; } 
 							}
-							if(panel == 2){
-								if(module == 1){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[46] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 2){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[47] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 3){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[48] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
+							else if(panel == 2){
+								if(module == 1){ thisID=generrids[46]; } 
+								else if(module == 2){ thisID=generrids[47]; } 
+								else if(module == 3){ thisID=generrids[48]; } 
 							}
 						}
-						if (disk == 2){
+						else if (disk == 2){
 							if(panel == 1){
-								if(module == 1){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[36] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 2){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[37] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 3){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[38] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 4){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[39] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
+								if(module == 1){ thisID=generrids[36]; } 
+								else if(module == 2){ thisID=generrids[37]; } 
+								else if(module == 3){ thisID=generrids[38]; } 
+								else if(module == 4){ thisID=generrids[39]; } 
 							}	
-							if(panel == 2){
-								if(module == 1){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[49] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 2){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[50] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
-								if(module == 3){
-									if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[51] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
-								}
+							else if(panel == 2){
+								if(module == 1){ thisID=generrids[49]; } 
+								else if(module == 2){ thisID=generrids[50]; } 
+								else if(module == 3){ thisID=generrids[51]; } 
 							}
 						}
 					}
-						
-				// ----- debug:
-				std::cout<<"This is an endcap element with: side "<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n"; //Uncomment to read out exact position of each element.
-				// -----
+
+					if (thisID==0000 || ( ! (*obj).putGenErrorID( detid.rawId(),thisID ) ) )
+						std::cout << " Could not fill barrel det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
+					// ----- debug:
+					std::cout<<"This is an endcap element with: side "<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n"; //Uncomment to read out exact position of each element.
+					// -----
 				}
 			}
 
+			//Print out the assignment of this DetID
 			short mapnum;
 			std::cout<<"checking map:\n";
 			mapnum = (*obj).getGenErrorID( detid.rawId());
 			std::cout<<"The DetID: "<<detid.rawId()<<" is mapped to the template: "<<mapnum<<".\n\n";
 
-			//else 
-				//if ( ! (*obj).putGenErrorID( detid.rawId(),generrids[1] ) )
-									//edm::LogInfo("Template Info") << " Could not fill barrel det unit";
-									//std::cout << "ERROR! OH NO!\n";
 		}
 	}
-	//for(std::map<unsigned int,short>::const_iterator it=templMap.begin(); it!=templMap.end();++it)
-		//std::cout<< "Map:\n"<< "DetId: "<< it->first << " GenErrorID: "<< it->second <<"\n";
 
 	//--- Create a new IOV
 	edm::Service<cond::service::PoolDBOutputService> poolDbService;

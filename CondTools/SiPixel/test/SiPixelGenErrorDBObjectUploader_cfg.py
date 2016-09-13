@@ -13,6 +13,21 @@ options.register('Version',
     			 opts.VarParsing.multiplicity.singleton,
     			 opts.VarParsing.varType.string,
     			 'Template DB object version')
+options.register('Map',
+    			 '../generr_data/generror_IOV12/IOV12_map.csv',
+    			 opts.VarParsing.multiplicity.singleton,
+    			 opts.VarParsing.varType.string,
+    			 'Path to map file')
+options.register('Delimiter',
+    			 ',',
+    			 opts.VarParsing.multiplicity.singleton,
+    			 opts.VarParsing.varType.string,
+    			 'Delimiter in csv file')
+options.register('Quotechar',
+    			 '"',
+    			 opts.VarParsing.multiplicity.singleton,
+    			 opts.VarParsing.varType.string,
+    			 'Quotechar in csv file')
 options.register('GenErrFilePath',
     			 'CondTools/SiPixel/generr_data',
     			 opts.VarParsing.multiplicity.singleton,
@@ -45,16 +60,16 @@ process.GlobalTag.globaltag = options.GlobalTag
 prefix = options.GenErrFilePath+'/generror_summary_'
 suffix = ".out"
 files_to_upload = cms.vstring(
-	file_path + "zp5600" + suffix,
-	file_path + "zp9510" + suffix,
-	file_path + "zp5611" + suffix,
-	file_path + "zp5711" + suffix,
-	file_path + "zp7612" + suffix,
-	file_path + "zp7712" + suffix,
-	file_path + "zp5616" + suffix,
-	file_path + "zp6417" + suffix,
-	file_path + "zp4818" + suffix,
-	file_path + "zp1006" + suffix,)
+	prefix + "zp5600" + suffix,
+	prefix + "zp9510" + suffix,
+	prefix + "zp5611" + suffix,
+	prefix + "zp5711" + suffix,
+	prefix + "zp7612" + suffix,
+	prefix + "zp7712" + suffix,
+	prefix + "zp5616" + suffix,
+	prefix + "zp6417" + suffix,
+	prefix + "zp4818" + suffix,
+	prefix + "zp1006" + suffix,)
 theGenErrorIds = cms.vuint32(
 							# IN THE BARREL:
 						9510, # Position 0: Layer 1, Mod 1
