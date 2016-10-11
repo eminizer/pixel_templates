@@ -9,11 +9,21 @@ options.register('MagField',
     			 opts.VarParsing.multiplicity.singleton,
     			 opts.VarParsing.varType.float,
     			 'Magnetic field value in Tesla')
+options.register('Year',
+    			 None,
+    			 opts.VarParsing.multiplicity.singleton,
+    			 opts.VarParsing.varType.string,
+    			 'Current year for versioning')
 options.register('Version',
     			 None,
     			 opts.VarParsing.multiplicity.singleton,
     			 opts.VarParsing.varType.string,
     			 'Template DB object version')
+options.register('Append',
+    			 None,
+    			 opts.VarParsing.multiplicity.singleton,
+    			 opts.VarParsing.varType.string,
+    			 'Any additional string to add to the filename, i.e. "bugfix", etc.')
 options.register('Map',
     			 '../generr_data/generror_IOV12/IOV12_map.csv',
     			 opts.VarParsing.multiplicity.singleton,
@@ -48,7 +58,7 @@ print'\nVersion = %s \n'%(version)
 magfieldstrsplit = str(options.MagField).split('.')
 MagFieldString = magfieldstrsplit[0]
 if len(magfieldstrsplit)>1 :
-	MagFieldString+='p'+magfieldstrsplit[1]
+	MagFieldString+=magfieldstrsplit[1]
 
 #open the map file
 mapfile = open(options.Map,'rUb')
@@ -155,9 +165,13 @@ process.load("Configuration.StandardSequences.GeometryDB_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 process.GlobalTag.globaltag = options.GlobalTag
 
-generror_base = 'SiPixelGenErrorDBObject' + MagFieldString + version
+generror_base = 'SiPixelGenErrorDBObject_'+MagFieldString+'T_'+options.Year+'_v'+version
+if options.Append!=None :
+	generror_base+='_'+options.Append
+#output SQLite filename
+sqlitefilename = 'sqlite_file:'+generror_base+'.db'
 
-print '\nUploading %s with record SiPixelGenErrorDBObjectRcd in file siPixelGenErrors%s%s.db\n' % (generror_base,MagFieldString,version)
+print '\nUploading %s with record SiPixelGenErrorDBObjectRcd in file %s\n' % (generror_base,sqlitefilename)
 
 process.source = cms.Source("EmptyIOVSource",
                             timetype = cms.string('runnumber'),
@@ -171,7 +185,7 @@ process.PoolDBOutputService = cms.Service("PoolDBOutputService",
     															  authenticationPath = cms.untracked.string('.')
     															  ),
                                           timetype = cms.untracked.string('runnumber'),
-                                          connect = cms.string('sqlite_file:siPixelGenErrorsNM' + MagFieldString + version + '.db'),
+                                          connect = cms.string(sqlitefilename),
                                           toPut = cms.VPSet(cms.PSet(record = cms.string('SiPixelGenErrorDBObjectRcd'),
     																 tag = cms.string(generror_base)
     																 )
@@ -189,6 +203,6 @@ process.uploader = cms.EDAnalyzer("SiPixelGenErrorDBObjectUploader",
 								  )
 process.myprint = cms.OutputModule("AsciiOutputModule")
 process.p = cms.Path(process.uploader)
-process.CondDBCommon.connect = 'sqlite_file:siPixelGenErrorsNM' + MagFieldString + '.db'
+process.CondDBCommon.connect = sqlitefilename
 process.CondDBCommon.DBParameters.messageLevel = 0
 process.CondDBCommon.DBParameters.authenticationPath = './'
