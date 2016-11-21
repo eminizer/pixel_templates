@@ -1,0 +1,59 @@
+IOV 14 (Autumn 2016)
+
+template files
+
+template_summary_zp4838.out
+template_summary_zp5631.out
+template_summary_zp5633.out
+template_summary_zp5636.out
+template_summary_zp5731.out
+template_summary_zp6435.out
+template_summary_zp6437.out
+template_summary_zp7632.out
+template_summary_zp7634.out
+template_summary_zp7732.out
+template_summary_zp9430.out
+template_summary_zp9530.out
+
+
+BPix [layer][module] 
+
+    bptmp[0][0] = 9530;
+    bptmp[0][1] = 9530;
+    bptmp[0][2] = 9530;
+    bptmp[0][3] = 9530;
+    bptmp[0][4] = 9430;
+    bptmp[0][5] = 9430;
+    bptmp[0][6] = 9430;
+    bptmp[0][7] = 9430;
+    bptmp[1][0] = 5731;
+    bptmp[1][1] = 5731;
+    bptmp[1][2] = 5731;
+    bptmp[1][3] = 5731;
+    bptmp[1][4] = 5631;
+    bptmp[1][5] = 5631;
+    bptmp[1][6] = 5631;
+    bptmp[1][7] = 5631;
+    bptmp[2][0] = 7732;
+    bptmp[2][1] = 7732;
+    bptmp[2][2] = 7732;
+    bptmp[2][3] = 7732;
+    bptmp[2][4] = 7632;
+    bptmp[2][5] = 7632;
+    bptmp[2][6] = 7632;
+    bptmp[2][7] = 7632;
+    
+BPix new modules [layers 1,2,3]
+
+   bpnew[0] = 5636;
+   bpnew[1] = 6437;
+   bpnew[2] = 4838;
+
+    
+FPix
+
+plaquettes 1 = 5633
+plaquettes 2 = 7634
+plaquettes 3-4 = 6435
+
+

@@ -25,7 +25,7 @@ options.register('Append',
     			 opts.VarParsing.varType.string,
     			 'Any additional string to add to the filename, i.e. "bugfix", etc.')
 options.register('Map',
-    			 '../generr_data/generror_IOV12/IOV12_map.csv',
+    			 '../data/generror_IOV13/IOV13_map.csv',
     			 opts.VarParsing.multiplicity.singleton,
     			 opts.VarParsing.varType.string,
     			 'Path to map file')
@@ -40,15 +40,20 @@ options.register('Quotechar',
     			 opts.VarParsing.varType.string,
     			 'Quotechar in csv file')
 options.register('GenErrFilePath',
-    			 'CondTools/SiPixel/generr_data',
+    			 'CondTools/SiPixel/data/generror_IOV13',
     			 opts.VarParsing.multiplicity.singleton,
     			 opts.VarParsing.varType.string,
     			 'Location of generr files')
 options.register('GlobalTag',
-    			 '80X_dataRun2_Prompt_v8',
+    			 'auto:run2_data',
     			 opts.VarParsing.multiplicity.singleton,
     			 opts.VarParsing.varType.string,
     			 'Global tag for this run')
+options.register('useVectorIndices',
+    			 True,
+    			 opts.VarParsing.multiplicity.singleton,
+    			 opts.VarParsing.varType.bool,
+    			 'Switch on in case Morris uses vector indices in csv file, eg. [0,(N-1)] instead of [1,N]')
 options.parseArguments()
 
 MagFieldValue = 10.*options.MagField #code needs it in deciTesla
@@ -157,13 +162,16 @@ for s in range(len(sections)) :
 #	panel, plaq =  endcap_locations[i].split('_')[3], endcap_locations[i].split('_')[4] #DEBUG
 #	print '	disk %s, blade %s, side %s, panel %s, plaquette %s will have template ID %d assigned to it'%(disk,blade,side,panel,plaq,tempid) #DEBUG
 
-process = cms.Process("SiPixelGenErrorDBUpload")
-process.load("CondCore.DBCommon.CondDBCommon_cfi")
+from Configuration.StandardSequences.Eras import eras
+
+process = cms.Process("SiPixelGenErrorDBUpload",eras.Run2_25ns)
+process.load("CondCore.CondDB.CondDB_cfi")
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.load("Configuration.StandardSequences.GeometryDB_cff")
+process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 #process.load("Geometry.TrackerGeometryBuilder.trackerGeometry_cfi")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-process.GlobalTag.globaltag = options.GlobalTag
+from Configuration.AlCa.GlobalTag import GlobalTag
+process.GlobalTag = GlobalTag(process.GlobalTag, options.GlobalTag, '')
 
 generror_base = 'SiPixelGenErrorDBObject_'+MagFieldString+'T_'+options.Year+'_v'+version
 if options.Append!=None :
@@ -199,10 +207,11 @@ process.uploader = cms.EDAnalyzer("SiPixelGenErrorDBObjectUploader",
                                   barrelLocations = cms.vstring(barrel_locations),
                                   endcapLocations = cms.vstring(endcap_locations),
                                   barrelGenErrIds = cms.vuint32(barrel_generr_IDs),
-                                  endcapGenErrIds = cms.vuint32(endcap_generr_IDs)
+                                  endcapGenErrIds = cms.vuint32(endcap_generr_IDs),
+                                  useVectorIndices  = cms.untracked.bool(options.useVectorIndices),
 								  )
 process.myprint = cms.OutputModule("AsciiOutputModule")
 process.p = cms.Path(process.uploader)
-process.CondDBCommon.connect = sqlitefilename
-process.CondDBCommon.DBParameters.messageLevel = 0
-process.CondDBCommon.DBParameters.authenticationPath = './'
+process.CondDB.connect = sqlitefilename
+process.CondDB.DBParameters.messageLevel = 0
+process.CondDB.DBParameters.authenticationPath = './'

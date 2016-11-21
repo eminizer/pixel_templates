@@ -34,6 +34,7 @@ class SiPixelTemplateDBObjectUploader : public edm::EDAnalyzer {
 			vstring theEndcapLocations;
 			std::vector<uint32_t> theBarrelTemplateIds;
 			std::vector<uint32_t> theEndcapTemplateIds;
+			bool useVectorIndices;
 		
 };
 

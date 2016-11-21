@@ -34,6 +34,7 @@ class SiPixelGenErrorDBObjectUploader : public edm::EDAnalyzer {
 			vstring theEndcapLocations;
 			std::vector<uint32_t> theBarrelGenErrIds;
 			std::vector<uint32_t> theEndcapGenErrIds;
+			bool useVectorIndices;
 		
 };
 
