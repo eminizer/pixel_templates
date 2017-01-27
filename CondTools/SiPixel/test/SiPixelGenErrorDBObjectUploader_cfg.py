@@ -25,7 +25,7 @@ options.register('Append',
     			 opts.VarParsing.varType.string,
     			 'Any additional string to add to the filename, i.e. "bugfix", etc.')
 options.register('Map',
-    			 '../data/generror_IOV13/IOV13_map.csv',
+    			 '../data/template1D_IOV0_phase1_MC/IOV0_phase1_MC_map.csv',
     			 opts.VarParsing.multiplicity.singleton,
     			 opts.VarParsing.varType.string,
     			 'Path to map file')
@@ -40,7 +40,7 @@ options.register('Quotechar',
     			 opts.VarParsing.varType.string,
     			 'Quotechar in csv file')
 options.register('GenErrFilePath',
-    			 'CondTools/SiPixel/data/generror_IOV13',
+    			 'CondTools/SiPixel/data/template1D_IOV0_phase1_MC',
     			 opts.VarParsing.multiplicity.singleton,
     			 opts.VarParsing.varType.string,
     			 'Location of generr files')
@@ -50,7 +50,7 @@ options.register('GlobalTag',
     			 opts.VarParsing.varType.string,
     			 'Global tag for this run')
 options.register('useVectorIndices',
-    			 True,
+    			 False,
     			 opts.VarParsing.multiplicity.singleton,
     			 opts.VarParsing.varType.bool,
     			 'Switch on in case Morris uses vector indices in csv file, eg. [0,(N-1)] instead of [1,N]')
@@ -101,8 +101,8 @@ suffix = '.out'
 for s in range(len(sections)) :
 	for line in sections[s] :
 	#	print 'reading line: %s'%(line) #DEBUG
+		newtemplatefilename = prefix+str(line[0])+suffix
 		template_ID = int(line[0])
-		newtemplatefilename = prefix+str(template_ID)+suffix
 		if not newtemplatefilename in template_filenames :
 			template_filenames.append(newtemplatefilename)
 		if s%2==0 :
@@ -126,7 +126,7 @@ for s in range(len(sections)) :
 							location_index = barrel_locations.index(location_string)
 							barrel_generr_IDs[location_index]=template_ID
 		else : 
-			disk, blade, side, panel, plaq = line[1], line[2], line[3], line[4], line[5]
+			disk, blade, side, panel = line[1], line[2], line[3], line[4]
 			#endcap ID strings are "disk_blade_side_panel_plaquette"
 			disksplit = disk.split('-'); firstdisk=int(disksplit[0]); lastdisk = int(disksplit[1])+1 if len(disksplit)>1 else firstdisk+1
 			for i in range(firstdisk,lastdisk) :
@@ -139,16 +139,13 @@ for s in range(len(sections)) :
 						side_string = blade_string+str(k)+'_'
 						panelsplit = panel.split('-'); firstpanel=int(panelsplit[0]); lastpanel = int(panelsplit[1])+1 if len(panelsplit)>1 else firstpanel+1
 						for m in range(firstpanel,lastpanel) :
-							panel_string = side_string+str(m)+'_'
-							plaqsplit = plaq.split('-'); firstplaq=int(plaqsplit[0]); lastplaq = int(plaqsplit[1])+1 if len(plaqsplit)>1 else firstplaq+1
-							for n in range(firstplaq,lastplaq) :
-								location_string = panel_string+str(n)
-								if s==1 :
-									endcap_locations.append(location_string)
-									endcap_generr_IDs.append(template_ID)
-								else :
-									location_index = endcap_locations.index(location_string)
-									endcap_generr_IDs[location_index]=template_ID
+							location_string = side_string+str(m)
+							if s==1 :
+								endcap_locations.append(location_string)
+								endcap_generr_IDs.append(template_ID)
+							else :
+								location_index = endcap_locations.index(location_string)
+								endcap_generr_IDs[location_index]=template_ID
 #Debug print out assignments
 #print 'BARREL ASSIGNMENTS:' #DEBUG
 #for i in range(len(barrel_locations)) : #DEBUG
@@ -158,9 +155,8 @@ for s in range(len(sections)) :
 #print 'ENDCAP ASSIGNMENTS:' #DEBUG
 #for i in range(len(endcap_locations)) : #DEBUG
 #	tempid = endcap_generr_IDs[i] #DEBUG
-#	disk, blade, side = endcap_locations[i].split('_')[0], endcap_locations[i].split('_')[1], endcap_locations[i].split('_')[2] #DEBUG
-#	panel, plaq =  endcap_locations[i].split('_')[3], endcap_locations[i].split('_')[4] #DEBUG
-#	print '	disk %s, blade %s, side %s, panel %s, plaquette %s will have template ID %d assigned to it'%(disk,blade,side,panel,plaq,tempid) #DEBUG
+#	disk, blade, side = endcap_locations[i].split('_')[0], endcap_locations[i].split('_')[1], endcap_locations[i].split('_')[2], endcap_locations[i].split('_')[3] #DEBUG
+#	print '	disk %s, blade %s, side %s, panel %s will have template ID %d assigned to it'%(disk,blade,side,panel,tempid) #DEBUG
 
 from Configuration.StandardSequences.Eras import eras
 
@@ -202,8 +198,9 @@ process.PoolDBOutputService = cms.Service("PoolDBOutputService",
 process.uploader = cms.EDAnalyzer("SiPixelGenErrorDBObjectUploader",
                                   siPixelGenErrorCalibrations = cms.vstring(template_filenames),
                                   theGenErrorBaseString = cms.string(generror_base),
-                                  Version = cms.double("3.0"),
+                                  Version = cms.double(3.0),
                                   MagField = cms.double(MagFieldValue),
+                                  detIds = cms.vuint32(1,2), #0 is for all, 1 is Barrel, 2 is EndCap
                                   barrelLocations = cms.vstring(barrel_locations),
                                   endcapLocations = cms.vstring(endcap_locations),
                                   barrelGenErrIds = cms.vuint32(barrel_generr_IDs),

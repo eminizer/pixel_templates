@@ -124,7 +124,7 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 			unsigned int layer=0, ladder=0, disk=0, side=0, blade=0, panel=0, module=0;
 			// Some extra variables from Janos, that can be used for Phase 1 - comment in if needed
 			// unsigned int shl=0, sec=0, half=0, flipped=0, ring=0;
-			short thisID = 0000;
+			short thisID = 10000;
 			unsigned int iter;
 					
 			// Now we sort them into the Barrel and Endcap:
@@ -165,7 +165,7 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 						thisID=(short)theBarrelTemplateIds[iter];
 				}
 
-				if (thisID==0000 || ( ! (*obj).putTemplateID( detid.rawId(),thisID ) ) )
+				if (thisID==10000 || ( ! (*obj).putTemplateID( detid.rawId(),thisID ) ) )
 				  std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";	
 				// ----- debug:
 				std::cout<<"This is a barrel element with: layer "<<layer<<", ladder "<<ladder<<" and module "<<module<<".\n"; //Uncomment to read out exact position of each element.
@@ -177,10 +177,9 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 
 				//Get the DetId's disk, blade, side, panel, and module
 				disk   = tTopo->pxfDisk(detid.rawId()); //1,2,3
-				blade  = tTopo->pxfBlade(detid.rawId()); //1-24 (and in Phase I: Ring 1 is 1-22, Ring 2 is 23-56)
+				blade  = tTopo->pxfBlade(detid.rawId()); //1-56 (Ring 1 is 1-22, Ring 2 is 23-56)
 				side   = tTopo->pxfSide(detid.rawId()); //side=1 for -z, 2 for +z
 				panel  = tTopo->pxfPanel(detid.rawId()); //panel=1,2	
-				module = tTopo->pxfModule(detid.rawId()); // plaquette=1-4
 				/*
 				// Comment these in if needed
 				PixelEndcapName pen(detid, tTopo, phase);
@@ -188,7 +187,7 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 				ring   = pen.ringName(); //1,2 This is for Phase I
 				*/
 				if (useVectorIndices) { 
-				  --disk; --blade; --side; --panel; --module;
+				  --disk; --blade; --side; --panel; 
 				}
 
 				//Assign IDs
@@ -201,23 +200,21 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 					unsigned int first_delim_pos = loc_string.find("_");
 					unsigned int second_delim_pos = loc_string.find("_",first_delim_pos+1);
 					unsigned int third_delim_pos = loc_string.find("_",second_delim_pos+1);
-					unsigned int fourth_delim_pos = loc_string.find("_",third_delim_pos+1);
 					//get the disk, blade, side, panel, and module as unsigned ints
 					unsigned int checkdisk = (unsigned int)stoi(loc_string.substr(0,first_delim_pos));
 					unsigned int checkblade = (unsigned int)stoi(loc_string.substr(first_delim_pos+1,second_delim_pos-first_delim_pos-1));
 					unsigned int checkside = (unsigned int)stoi(loc_string.substr(second_delim_pos+1,third_delim_pos-second_delim_pos-1));
-					unsigned int checkpanel = (unsigned int)stoi(loc_string.substr(third_delim_pos+1,fourth_delim_pos-third_delim_pos-1));
-					unsigned int checkmodule = (unsigned int)stoi(loc_string.substr(fourth_delim_pos+1,5));
+					unsigned int checkpanel = (unsigned int)stoi(loc_string.substr(third_delim_pos+1,5));
 					//check them against the desired disk, blade, side, panel, and module
-					if (disk==checkdisk && blade==checkblade && side==checkside && panel==checkpanel && module==checkmodule)
+					if (disk==checkdisk && blade==checkblade && side==checkside && panel==checkpanel)
 						//if they match, set the template ID
 						thisID=(short)theEndcapTemplateIds[iter];
 				}
 
-				if (thisID == 0000 || ( ! (*obj).putTemplateID( detid.rawId(),thisID ) ) )
-					std::cout << " Could not fill endcap det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
+				if (thisID == 10000 || ( ! (*obj).putTemplateID( detid.rawId(),thisID ) ) )
+					std::cout << " Could not fill endcap det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", and panel "<<panel<<".\n";
 				// ----- debug:
-				std::cout<<"This is an endcap element with: side "<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n"; //Uncomment to read out exact position of each element.
+				std::cout<<"This is an endcap element with: side "<<side<<", disk "<<disk<<", blade "<<blade<<", and panel "<<panel<<".\n"; //Uncomment to read out exact position of each element.
 				// -----
 			}
 

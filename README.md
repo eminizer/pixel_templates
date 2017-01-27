@@ -44,14 +44,14 @@ The output of these commands prints some useful information, including the locat
 
 1) Producing Template SQLite files
 ```Shell
-cd /CondTools/SiPixel/test
+cd CondTools/SiPixel/test
 cmsRun SiPixelTemplateDBObjectUploader_cfg.py MagField=3.8 Year=2016 Version=2 Append=bugfix
 ```
 This will produce an SQLLite file called "SiPixelTemplateDBObject_38T_2016_v2_bugfix.db"
 
 2) Producing GenError SQLite files
 ```Shell
-cd /CondTools/SiPixel/test
+cd CondTools/SiPixel/test
 cmsRun SiPixelGenErrorDBObjectUploader_cfg.py MagField=3.8 Year=2016 Version=2 Append=bugfix
 ```
 This will produce an SQLLite file called "SiPixelGenErrorDBObject_38T_2016_v2_bugfix.db"
@@ -76,6 +76,8 @@ Command Line Options
 8) Quotechar: The quotechar used in the .csv map file (default is double quotes, """)
 
 9) (Template/GenErr)FilePath: The path to the directory holding the template/generr files (these are currently set to the defaults mentioned above)
+
+10) useVectorIndices: Set to true if the input file is indexed [0,(N-1)] instead of [1,N]; ([1-N] is the default and corresponds to the pixel offline conventions)
 
 Work to be Done
 ===============

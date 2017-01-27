@@ -30,6 +30,7 @@ class SiPixelGenErrorDBObjectUploader : public edm::EDAnalyzer {
 			std::string theGenErrorBaseString;
 			float theVersion;
 			float theMagField;
+			std::vector<uint32_t> theDetIds;
 			vstring theBarrelLocations;
 			vstring theEndcapLocations;
 			std::vector<uint32_t> theBarrelGenErrIds;

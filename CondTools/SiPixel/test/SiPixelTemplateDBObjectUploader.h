@@ -30,6 +30,7 @@ class SiPixelTemplateDBObjectUploader : public edm::EDAnalyzer {
 			std::string theTemplateBaseString;
 			double theVersion;
 			double theMagField;
+			std::vector<uint32_t> theDetIds;
 			vstring theBarrelLocations;
 			vstring theEndcapLocations;
 			std::vector<uint32_t> theBarrelTemplateIds;
