@@ -187,8 +187,7 @@ SiPixelGenErrorDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 				ring   = pen.ringName(); //1,2 This is for Phase I
 				*/
 				if (useVectorIndices) { 
-				  --disk; --blade; --side; --panel; 
-				  /* --module; Warning: Here Morris still uses normal 1-4 */
+				  --disk; --blade; --side; --panel; --module;
 				}
 
 				//Assign IDs

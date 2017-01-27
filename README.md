@@ -10,9 +10,9 @@ Currently not yet integrated into CMSSW, so this is very kludge-y and does not r
 This code just adds a few files to CondTools in CMSSW, so until it's incorporated this will be a bit nasty. 
 
 ```Shell
-setenv SCRAM_ARCH slc6_amd64_gcc493
-cmsrel CMSSW_8_0_0
-cd CMSSW_8_0_0/src/
+setenv SCRAM_ARCH slc6_amd64_gcc530
+cmsrel CMSSW_9_0_X_2017-01-26-2300
+cd CMSSW_9_0_X_2017-01-26-2300/src/
 cmsenv
 git cms-addpkg CondTools
 git cms-addpkg Configuration
