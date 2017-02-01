@@ -25,7 +25,7 @@ options.register('Append',
     			 opts.VarParsing.varType.string,
     			 'Any additional string to add to the filename, i.e. "bugfix", etc.')
 options.register('Map',
-    			 '../data/template1D_IOV0_phase1_MC/IOV0_phase1_MC_map.csv',
+    			 '../data/template1D_IOV0_preMC/IOV0_phase1_preMC_map.csv',
     			 opts.VarParsing.multiplicity.singleton,
     			 opts.VarParsing.varType.string,
     			 'Path to map file')
@@ -40,7 +40,7 @@ options.register('Quotechar',
     			 opts.VarParsing.varType.string,
     			 'Quotechar in csv file')
 options.register('TemplateFilePath',
-    			 'CondTools/SiPixel/data/template1D_IOV0_phase1_MC',
+    			 'CondTools/SiPixel/data/template1D_IOV0_preMC',
     			 opts.VarParsing.multiplicity.singleton,
     			 opts.VarParsing.varType.string,
     			 'Location of template files')
