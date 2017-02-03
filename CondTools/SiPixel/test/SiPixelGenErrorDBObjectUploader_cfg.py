@@ -169,7 +169,7 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, options.GlobalTag, '')
 
-generror_base = 'SiPixelGenErrorDBObject_'+MagFieldString+'T_'+options.Year+'_v'+version
+generror_base = 'SiPixelGenErrorDBObject_phase1_'+MagFieldString+'T_'+options.Year+'_v'+version
 if options.Append!=None :
 	generror_base+='_'+options.Append
 #output SQLite filename

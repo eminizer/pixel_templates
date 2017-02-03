@@ -1,6 +1,6 @@
 2017 Startup Conditions
 
-template files
+template files [to make SiPixelTemplateDBObject_phase1_38T_2017_v1]
 
 template_summary_zp0200.out
 template_summary_zp0240.out
@@ -9,7 +9,7 @@ template_summary_zp0260.out
 template_summary_zp0350.out
 template_summary_zp0660.out
 
-generror files
+generror files [to make SiPixelGenErrorDBObject_phase1_38T_2017_v1]
 
 generror_summary_zp0200.out
 generror_summary_zp0240.out

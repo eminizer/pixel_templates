@@ -45,16 +45,16 @@ The output of these commands prints some useful information, including the locat
 1) Producing Template SQLite files
 ```Shell
 cd CondTools/SiPixel/test
-cmsRun SiPixelTemplateDBObjectUploader_cfg.py MagField=3.8 Year=2016 Version=2 Append=bugfix
+cmsRun SiPixelTemplateDBObjectUploader_cfg.py MagField=3.8 Year=2017 Version=1 Append=bugfix Map=../data/template1D_phase1_2017_IOV1/phase1_2017_IOV1_map.csv TemplateFilePath=/CondTools/SiPixel/data/template1D_phase1_2017_IOV1
 ```
-This will produce an SQLLite file called "SiPixelTemplateDBObject_38T_2016_v2_bugfix.db"
+This will produce an SQLLite file called "SiPixelTemplateDBObject_phase1_38T_2017_v1_bugfix.db"
 
 2) Producing GenError SQLite files
 ```Shell
 cd CondTools/SiPixel/test
-cmsRun SiPixelGenErrorDBObjectUploader_cfg.py MagField=3.8 Year=2016 Version=2 Append=bugfix
+cmsRun SiPixelGenErrorDBObjectUploader_cfg.py MagField=3.8 Year=2017 Version=1 Append=bugfix Map=../data/template1D_phase1_2017_IOV1/phase1_2017_IOV1_map.csv GenErrFilePath=/CondTools/SiPixel/data/template1D_phase1_2017_IOV1
 ```
-This will produce an SQLLite file called "SiPixelGenErrorDBObject_38T_2016_v2_bugfix.db"
+This will produce an SQLLite file called "SiPixelGenErrorDBObject_phase1_38T_2017_v1_bugfix.db"
 
 Command Line Options
 ====================
