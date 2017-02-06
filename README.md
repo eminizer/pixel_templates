@@ -11,8 +11,8 @@ This code just adds a few files to CondTools in CMSSW, so until it's incorporate
 
 ```Shell
 setenv SCRAM_ARCH slc6_amd64_gcc530
-cmsrel CMSSW_9_0_X_2017-01-26-2300
-cd CMSSW_9_0_X_2017-01-26-2300/src/
+cmsrel CMSSW_9_0_0_pre4
+cd CMSSW_9_0_0_pre4/src/
 cmsenv
 git cms-addpkg CondTools
 git cms-addpkg Configuration
