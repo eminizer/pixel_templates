@@ -27,7 +27,7 @@ Input Files
 
 1) Template and GenError Files
 * These are produced by Prof. Morris Swartz at Johns Hopkins University
-* Template files should be located by default in /CondTools/SiPixel/data/, GenErr files in /CondTools/SiPixel/generr_data (this can be changed via a command line option, see below)
+* Template files should be located by default in CondTools/SiPixel/data/, GenErr files in CondTools/SiPixel/generr_data (this can be changed via a command line option, see below)
 * Template files should be named in the format "template_summary_zp????.out", GenErrs files as "generr_summary_zp????.out" (this is hardcoded currently so if it changes edits to the scripts will need to be made)
 
 2) Map File
@@ -45,14 +45,14 @@ The output of these commands prints some useful information, including the locat
 1) Producing Template SQLite files
 ```Shell
 cd CondTools/SiPixel/test
-cmsRun SiPixelTemplateDBObjectUploader_cfg.py MagField=3.8 Year=2017 Version=1 Append=bugfix Map=../data/template1D_phase1_2017_IOV1/phase1_2017_IOV1_map.csv TemplateFilePath=/CondTools/SiPixel/data/template1D_phase1_2017_IOV1
+cmsRun SiPixelTemplateDBObjectUploader_cfg.py MagField=3.8 Year=2017 Version=1 Append=bugfix Map=../data/template1D_phase1_2017_IOV1/phase1_2017_IOV1_map.csv TemplateFilePath=CondTools/SiPixel/data/template1D_phase1_2017_IOV1
 ```
 This will produce an SQLLite file called "SiPixelTemplateDBObject_phase1_38T_2017_v1_bugfix.db"
 
 2) Producing GenError SQLite files
 ```Shell
 cd CondTools/SiPixel/test
-cmsRun SiPixelGenErrorDBObjectUploader_cfg.py MagField=3.8 Year=2017 Version=1 Append=bugfix Map=../data/template1D_phase1_2017_IOV1/phase1_2017_IOV1_map.csv GenErrFilePath=/CondTools/SiPixel/data/template1D_phase1_2017_IOV1
+cmsRun SiPixelGenErrorDBObjectUploader_cfg.py MagField=3.8 Year=2017 Version=1 Append=bugfix Map=../data/template1D_phase1_2017_IOV1/phase1_2017_IOV1_map.csv GenErrFilePath=CondTools/SiPixel/data/template1D_phase1_2017_IOV1
 ```
 This will produce an SQLLite file called "SiPixelGenErrorDBObject_phase1_38T_2017_v1_bugfix.db"
 
