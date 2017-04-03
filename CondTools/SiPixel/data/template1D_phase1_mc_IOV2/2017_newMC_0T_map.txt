@@ -1,0 +1,29 @@
+2017 Startup Conditions, 0T field
+
+template files [to make SiPixelTemplateDBObject_phase1_00T_mc_v1]
+
+template_summary_zp0400.out
+template_summary_zp0440.out
+
+generror files [to make SiPixelGenErrorDBObject_phase1_00T_mc_v1]
+
+generror_summary_zp0000.out
+generror_summary_zp0040.out
+
+
+
+BPix map
+
+all modules map to ID=0000
+    
+FPix
+
+Ring 2, ID = 0040
+Ring 1, Panel 1, ID = 0040
+Ring 1, Panel 2, ID = 0040
+
+Exceptions
+
+Side Disk   Blade   Ring   Panel  Template
+
+
