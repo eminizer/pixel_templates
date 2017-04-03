@@ -6,6 +6,7 @@ template_summary_zp0200.out
 template_summary_zp0240.out
 template_summary_zp0250.out
 template_summary_zp0260.out
+template_summary_zp0270.out
 template_summary_zp0350.out
 template_summary_zp0660.out
 
@@ -15,6 +16,7 @@ generror_summary_zp0200.out
 generror_summary_zp0240.out
 generror_summary_zp0250.out
 generror_summary_zp0260.out
+generror_summary_zp0270.out
 generror_summary_zp0350.out
 generror_summary_zp0360.out
 
@@ -25,7 +27,8 @@ all modules map to ID=0200
     
 FPix
 
-Ring 2, ID = 0240
+Ring 2, Panel 1, ID = 0240
+Ring 2, Panel 1, ID = 0270
 Ring 1, Panel 1, ID = 0250
 Ring 1, Panel 2, ID = 0260
 
