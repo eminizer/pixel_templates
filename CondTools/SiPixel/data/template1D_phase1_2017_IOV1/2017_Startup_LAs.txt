@@ -3,7 +3,13 @@
 
 BPix map
 
-all modules 0.115
+Layer 1, Modules 1-8, 
+Layer 2, Modules 1-4, 0.1318
+Layer 2, Modules 5-8, 0.1449
+Layer 3, Modules 1-4, 0.1318
+Layer 3, Modules 5-8, 0.1449
+Layer 4, Modules 1-4, 0.1318
+Layer 4, Modules 5-8, 0.1449
     
 FPix
 
