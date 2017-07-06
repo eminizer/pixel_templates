@@ -102,7 +102,10 @@ for s in range(len(sections)) :
 	for line in sections[s] :
 	#	print 'reading line: %s'%(line) #DEBUG
 		newtemplatefilename = prefix+str(line[0])+suffix
-		template_ID = int(line[0])
+		template_ID_s = line[0]
+		while len(template_ID_s)<4 :
+			template_ID_s='0'+template_ID_s
+		template_ID = int(template_ID_s)
 		if not newtemplatefilename in template_filenames :
 			template_filenames.append(newtemplatefilename)
 		if s%2==0 :

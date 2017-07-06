@@ -27,8 +27,8 @@ Input Files
 
 1) Template and GenError Files
 * These are produced by Prof. Morris Swartz at Johns Hopkins University
-* Template files should be located by default in CondTools/SiPixel/data/, GenErr files in CondTools/SiPixel/generr_data (this can be changed via a command line option, see below)
-* Template files should be named in the format "template_summary_zp????.out", GenErrs files as "generr_summary_zp????.out" (this is hardcoded currently so if it changes edits to the scripts will need to be made)
+* Template files should be located by default in CondTools/SiPixel/data/, GenErr files in CondTools/SiPixel/generr_data (this can be changed via a command line option, see below). Usually when I run I leave both types of template inside the CondTools/SiPixel/data/directory and point both the template and generror code to the same place using a command line option.
+* Template files should be named in the format "template_summary_zp????.out", GenErrs files as "generr_summary_zp????.out" (this is hardcoded currently so if it changes edits to the scripts will need to be made). Note that each of the template/generror file numbers is four characters long; the code expects this and will crash otherwise so if a template file is number 350 (for example) it should be named template_summary_zp0350.out.
 
 2) Map File
 * This is a .csv file that maps detector locations to templates
@@ -59,11 +59,11 @@ This will produce an SQLLite file called "SiPixelGenErrorDBObject_phase1_38T_201
 Command Line Options
 ====================
 
-1) MagField: Magnetic field value in Tesla
+1) MagField: Magnetic field value in Tesla (not deciTesla, so "3.8" NOT "38")
 
 2) Year: Current year for versioning
 
-3) Version: Version number (don't set this arbitrarily, ask if you don't know which to use)
+3) Version: Version number
 
 4) Append: Anything to add to the end of the SQLite filenames, like "bugfix"
 
@@ -77,7 +77,7 @@ Command Line Options
 
 9) (Template/GenErr)FilePath: The path to the directory holding the template/generr files (these are currently set to the defaults mentioned above)
 
-10) useVectorIndices: Set to true if the input file is indexed [0,(N-1)] instead of [1,N]; ([1-N] is the default and corresponds to the pixel offline conventions)
+10) useVectorIndices: Set to true if the input file is indexed [0,(N-1)] instead of [1,N]; ([1,N] is the default and corresponds to the pixel offline conventions)
 
 Work to be Done
 ===============
