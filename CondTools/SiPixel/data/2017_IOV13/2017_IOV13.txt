@@ -1,0 +1,22 @@
+2017 IOV13 Hall Mobilities [LAs]
+
+BPix map
+
+Layer 1, Modules 1-2/7-8, 0.0644
+Layer 1, Modules 3-6, 0.0634
+Layer 2, Modules 1-4, 0.0772
+Layer 2, Modules 5-8, 0.0813
+Layer 3, Modules 1-4, 0.0864
+Layer 3, Modules 5-8, 0.0929
+Layer 4, Modules 1-4, 0.0961
+Layer 4, Modules 5-8, 0.1036
+    
+FPix
+
+Ring 2, Panel 1, 0.0756
+Ring 2, Panel 2, 0.0736
+Ring 1, Panel 1, 0.0805
+Ring 1, Panel 2, 0.0788
+
+
+

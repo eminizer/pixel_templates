@@ -1,0 +1,17 @@
+2017 MC Thresholds Hall Mobilities
+
+BPix map
+
+Layer 1, Modules 1-8, 0.0650
+Layer 2, Modules 1-8, 0.0780
+Layer 3, Modules 1-8, 0.0900
+Layer 4, Modules 1-8, 0.1000
+    
+FPix
+
+Ring 2, Panel 1, 0.0770
+Ring 2, Panel 2, 0.0770
+Ring 1, Panel 1, 0.0770
+Ring 1, Panel 2, 0.0770
+
+

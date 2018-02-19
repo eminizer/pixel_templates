@@ -1,0 +1,21 @@
+2017D Hall Mobilities L1,L2,L3,L4,R1,R2 @ 350V,250/275V,200/225V,200/225V,300V,300V 
+
+BPix map
+
+Layer 1, Modules 1-8, 0.0595
+Layer 2, Modules 1-4, 0.0765
+Layer 2, Modules 5-8, 0.0805
+Layer 3, Modules 1-4, 0.0864
+Layer 3, Modules 5-8, 0.0929
+Layer 4, Modules 1-4, 0.0961
+Layer 4, Modules 5-8, 0.1036
+    
+FPix
+
+Ring 2, Panel 1, 0.0756
+Ring 2, Panel 2, 0.0736
+Ring 1, Panel 1, 0.0805
+Ring 1, Panel 2, 0.0788
+
+
+
