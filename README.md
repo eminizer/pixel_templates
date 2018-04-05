@@ -24,7 +24,7 @@ git checkout phase2_edits
 cd ..
 cp -r pixel_templates/ CondTools/* CondTools/
 rmrf pixel_templates/CondTools 
-scram b -j 20
+scram b -j 10
 ```
 
 Input Files

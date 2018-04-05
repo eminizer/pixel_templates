@@ -181,7 +181,7 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 				blade  = tTopo->pxfBlade(detid.rawId()); //1-56 (Ring 1 is 1-22, Ring 2 is 23-56)
 				side   = tTopo->pxfSide(detid.rawId()); //side=1 for -z, 2 for +z
 				panel  = tTopo->pxfPanel(detid.rawId()); //panel=1,2	
-				std::cout<<"Disk: "<<disk<<", blade: "<<blade<<", side: "<<side<<", panel: "<<panel<<", detID: "<<detid.rawId()<<"\n"
+				std::cout<<"Disk: "<<disk<<", blade: "<<blade<<", side: "<<side<<", panel: "<<panel<<", detID: "<<detid.rawId()<<"\n";
 				/*
 				// Comment these in if needed
 				PixelEndcapName pen(detid, tTopo, phase);
