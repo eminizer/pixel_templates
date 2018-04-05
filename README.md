@@ -28,7 +28,7 @@ Input Files
 1) Template and GenError Files
 * These are produced by Prof. Morris Swartz at Johns Hopkins University
 * Template files should be located by default in CondTools/SiPixel/data/, GenErr files in CondTools/SiPixel/generr_data (this can be changed via a command line option, see below). Usually when I run I leave both types of template inside the CondTools/SiPixel/data/directory and point both the template and generror code to the same place using a command line option.
-* Template files should be named in the format "template_summary_zp????.out", GenErrs files as "generr_summary_zp????.out" (this is hardcoded currently so if it changes edits to the scripts will need to be made). Note that each of the template/generror file numbers is four characters long; the code expects this and will crash otherwise so if a template file is number 350 (for example) it should be named template_summary_zp0350.out.
+* Template files should be named in the format "template_summary_zp????.out", GenErrs files as "generr_summary_zp????.out" (this is hardcoded currently so if it changes edits to the scripts will need to be made). 
 
 2) Map File
 * This is a .csv file that maps detector locations to templates
