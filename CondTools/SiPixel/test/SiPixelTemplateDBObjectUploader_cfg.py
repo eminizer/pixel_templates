@@ -45,7 +45,7 @@ options.register('TemplateFilePath',
     			 opts.VarParsing.varType.string,
     			 'Location of template files')
 options.register('GlobalTag',
-    			 'auto:phase1_2017_realistic',
+    			 'auto:phase2_realistic',
     			 opts.VarParsing.multiplicity.singleton,
     			 opts.VarParsing.varType.string,
     			 'Global tag for this run')
@@ -163,11 +163,11 @@ for s in range(len(sections)) :
 
 from Configuration.StandardSequences.Eras import eras
 
-process = cms.Process("SiPixelTemplateDBUpload",eras.Run2_2017)
+process = cms.Process("SiPixelTemplateDBUpload",eras.Phase2C2)
 process.load("CondCore.CondDB.CondDB_cfi")
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.load('Configuration.Geometry.GeometryExtended2017Reco_cff')
-process.load('Configuration.Geometry.GeometryExtended2017_cff')
+process.load('Configuration.Geometry.2023D17Reco_cff')
+process.load('Configuration.Geometry.GeometryExtended2023D17_cff')
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, options.GlobalTag, '')
