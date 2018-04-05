@@ -116,7 +116,7 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 	//bool phase = pDD->isThere(GeomDetEnumerators::P1PXB) && pDD->isThere(GeomDetEnumerators::P1PXEC);
 
 	//Loop over the detector elements and put template IDs in place
-	for(TrackerGeometry::DetUnitContainer::const_iterator it = pDD->detUnits().begin(); it != pDD->detUnits().end(); it++){
+	for(TrackerGeometry::DetContainer::const_iterator it = pDD->detUnits().begin(); it != pDD->detUnits().end(); it++){
 		if( dynamic_cast<PixelGeomDetUnit const*>((*it))!=0){
 
 			// Here is the actual looping step over all DetIds:				
@@ -136,6 +136,7 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 				layer  = tTopo->pxbLayer(detid.rawId());
 				ladder = tTopo->pxbLadder(detid.rawId());
 				module = tTopo->pxbModule(detid.rawId());
+				std::cout<<"Layer: "<<layer<<", ladder: "<<ladder<<", module: "<<module<<", detID: "<<detid.rawId()<<"\n"; 
 				/*
 				// Comment these in if needed
 				PixelBarrelName pbn(detid, tTopo, phase);
@@ -160,8 +161,8 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 					unsigned int checkladder = (unsigned int)stoi(loc_string.substr(first_delim_pos+1,second_delim_pos-first_delim_pos-1));
 					unsigned int checkmodule = (unsigned int)stoi(loc_string.substr(second_delim_pos+1,5));
 					//check them against the desired layer, ladder, and module
-					if (ladder==checkladder && layer==checklayer && module==checkmodule)
-						//if they match, set the template ID
+					//if (ladder==checkladder && layer==checklayer && module==checkmodule)
+					//	//if they match, set the template ID
 						thisID=(short)theBarrelTemplateIds[iter];
 				}
 
@@ -180,6 +181,7 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 				blade  = tTopo->pxfBlade(detid.rawId()); //1-56 (Ring 1 is 1-22, Ring 2 is 23-56)
 				side   = tTopo->pxfSide(detid.rawId()); //side=1 for -z, 2 for +z
 				panel  = tTopo->pxfPanel(detid.rawId()); //panel=1,2	
+				std::cout<<"Disk: "<<disk<<", blade: "<<blade<<", side: "<<side<<", panel: "<<panel<<", detID: "<<detid.rawId()<<"\n"
 				/*
 				// Comment these in if needed
 				PixelEndcapName pen(detid, tTopo, phase);
@@ -206,8 +208,8 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 					unsigned int checkside = (unsigned int)stoi(loc_string.substr(second_delim_pos+1,third_delim_pos-second_delim_pos-1));
 					unsigned int checkpanel = (unsigned int)stoi(loc_string.substr(third_delim_pos+1,5));
 					//check them against the desired disk, blade, side, panel, and module
-					if (disk==checkdisk && blade==checkblade && side==checkside && panel==checkpanel)
-						//if they match, set the template ID
+					//if (disk==checkdisk && blade==checkblade && side==checkside && panel==checkpanel)
+					//	//if they match, set the template ID
 						thisID=(short)theEndcapTemplateIds[iter];
 				}
 

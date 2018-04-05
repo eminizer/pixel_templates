@@ -10,13 +10,18 @@ Currently not yet integrated into CMSSW, so this is very kludge-y and does not r
 This code just adds a few files to CondTools in CMSSW, so until it's incorporated this will be a bit nasty. 
 
 ```Shell
-setenv SCRAM_ARCH slc6_amd64_gcc530
-cmsrel CMSSW_9_0_0_pre4
-cd CMSSW_9_0_0_pre4/src/
+setenv SCRAM_ARCH slc6_amd64_gcc630
+cmsrel CMSSW_10_1_0
+cd CMSSW_10_1_0/src/
 cmsenv
 git cms-addpkg CondTools
 git cms-addpkg Configuration
+git cms-addpkg Geometry
+git cms-addpkg DataFormats
 git clone https://github.com/eminizer/pixel_templates
+cd pixel_templates
+git checkout phase2_edits
+cd ..
 cp -r pixel_templates/ CondTools/* CondTools/
 rmrf pixel_templates/CondTools 
 scram b -j 20
@@ -28,7 +33,7 @@ Input Files
 1) Template and GenError Files
 * These are produced by Prof. Morris Swartz at Johns Hopkins University
 * Template files should be located by default in CondTools/SiPixel/data/, GenErr files in CondTools/SiPixel/generr_data (this can be changed via a command line option, see below). Usually when I run I leave both types of template inside the CondTools/SiPixel/data/directory and point both the template and generror code to the same place using a command line option.
-* Template files should be named in the format "template_summary_zp????.out", GenErrs files as "generr_summary_zp????.out" (this is hardcoded currently so if it changes edits to the scripts will need to be made). Note that each of the template/generror file numbers is four characters long; the code expects this and will crash otherwise so if a template file is number 350 (for example) it should be named template_summary_zp0350.out.
+* Template files should be named in the format "template_summary_zp????.out", GenErrs files as "generr_summary_zp????.out" (this is hardcoded currently so if it changes edits to the scripts will need to be made).
 
 2) Map File
 * This is a .csv file that maps detector locations to templates
