@@ -1,0 +1,22 @@
+2018 Startup Hall Mobilities [LAs]
+
+BPix map
+
+Layer 1, Modules 1-8, 0.0589
+Layer 1, New Modules, 0.0723
+Layer 2, Modules 1-4, 0.0774
+Layer 2, Modules 5-8, 0.0814
+Layer 3, Modules 1-4, 0.0850
+Layer 3, Modules 5-8, 0.0927
+Layer 4, Modules 1-4, 0.0967
+Layer 4, Modules 5-8, 0.1035
+    
+FPix
+
+Ring 2, Panel 1, 0.0772
+Ring 2, Panel 2, 0.0765
+Ring 1, Panel 1, 0.0838
+Ring 1, Panel 2, 0.0829
+
+
+
