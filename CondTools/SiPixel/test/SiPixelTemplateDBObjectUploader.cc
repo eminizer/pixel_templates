@@ -153,6 +153,7 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 				for (iter=0;iter<theBarrelLocations.size();++iter) {
 					//get the string of this barrel location
 					std::string loc_string = theBarrelLocations[iter];
+					std::cout<<"iter="<<iter<<", loc_string="<<loc_string<<"\n";
 					//find where the delimiters are
 					unsigned int first_delim_pos = loc_string.find("_");
 					unsigned int second_delim_pos = loc_string.find("_",first_delim_pos+1);
@@ -162,6 +163,7 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 					unsigned int checkmodule = (unsigned int)stoi(loc_string.substr(second_delim_pos+1,5));
 					//check them against the desired layer, ladder, and module
 					//if (ladder==checkladder && layer==checklayer && module==checkmodule)
+					if (iter==0)
 					//	//if they match, set the template ID
 						thisID=(short)theBarrelTemplateIds[iter];
 				}
@@ -209,6 +211,7 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 					unsigned int checkpanel = (unsigned int)stoi(loc_string.substr(third_delim_pos+1,5));
 					//check them against the desired disk, blade, side, panel, and module
 					//if (disk==checkdisk && blade==checkblade && side==checkside && panel==checkpanel)
+					if (iter==0)
 					//	//if they match, set the template ID
 						thisID=(short)theEndcapTemplateIds[iter];
 				}
@@ -218,6 +221,9 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 				// ----- debug:
 				std::cout<<"This is an endcap element with: side "<<side<<", disk "<<disk<<", blade "<<blade<<", and panel "<<panel<<".\n"; //Uncomment to read out exact position of each element.
 				// -----
+			}
+			else {
+				std::cout<<" Well this is weird. SubdetID = "<<detid.subdetId()<<"\n";
 			}
 
 			//Print out the assignment of this detID

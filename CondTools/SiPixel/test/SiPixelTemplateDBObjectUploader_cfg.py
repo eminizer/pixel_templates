@@ -163,10 +163,10 @@ for s in range(len(sections)) :
 
 from Configuration.StandardSequences.Eras import eras
 
-process = cms.Process("SiPixelTemplateDBUpload",eras.Phase2C2)
+process = cms.Process("SiPixelTemplateDBUpload",eras.Phase2)#C2)
 process.load("CondCore.CondDB.CondDB_cfi")
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.load('Configuration.Geometry.2023D17Reco_cff')
+process.load('Configuration.Geometry.GeometryExtended2023D17Reco_cff')
 process.load('Configuration.Geometry.GeometryExtended2023D17_cff')
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 from Configuration.AlCa.GlobalTag import GlobalTag
