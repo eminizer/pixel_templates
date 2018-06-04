@@ -116,7 +116,7 @@ SiPixel2DTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::
 	//bool phase = pDD->isThere(GeomDetEnumerators::P1PXB) && pDD->isThere(GeomDetEnumerators::P1PXEC);
 
 	//Loop over the detector elements and put template IDs in place
-	for(TrackerGeometry::DetUnitContainer::const_iterator it = pDD->detUnits().begin(); it != pDD->detUnits().end(); it++){
+	for(TrackerGeometry::DetContainer::const_iterator it = pDD->detUnits().begin(); it != pDD->detUnits().end(); it++){
 		if( dynamic_cast<PixelGeomDetUnit const*>((*it))!=0){
 
 			// Here is the actual looping step over all DetIds:				
