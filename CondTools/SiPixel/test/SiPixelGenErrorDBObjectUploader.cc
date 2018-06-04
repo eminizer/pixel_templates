@@ -1,12 +1,11 @@
-#include "CondTools/SiPixel/test/SiPixelTemplateDBObjectUploader.h"
-#include "CondFormats/DataRecord/interface/SiPixelTemplateDBObjectRcd.h"
+#include "CondTools/SiPixel/test/SiPixelGenErrorDBObjectUploader.h"
+#include "CondFormats/DataRecord/interface/SiPixelGenErrorDBObjectRcd.h"
 
 #include "CondCore/DBOutputService/interface/PoolDBOutputService.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 
 #include "DataFormats/SiPixelDetId/interface/PixelSubdetector.h"
 #include "Geometry/Records/interface/TrackerDigiGeometryRecord.h"
-#include "Geometry/Records/interface/IdealGeometryRecord.h"
 #include "Geometry/TrackerGeometryBuilder/interface/PixelGeomDetUnit.h"
 #include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
 
@@ -19,65 +18,65 @@
 #include <stdio.h>
 #include <iostream>
 
-SiPixelTemplateDBObjectUploader::SiPixelTemplateDBObjectUploader(const edm::ParameterSet& iConfig):
-	theTemplateCalibrations( iConfig.getParameter<vstring>("siPixelTemplateCalibrations") ),
-	theTemplateBaseString( iConfig.getParameter<std::string>("theTemplateBaseString") ),
+SiPixelGenErrorDBObjectUploader::SiPixelGenErrorDBObjectUploader(const edm::ParameterSet& iConfig):
+	theGenErrorCalibrations( iConfig.getParameter<vstring>("siPixelGenErrorCalibrations") ),
+	theGenErrorBaseString( iConfig.getParameter<std::string>("theGenErrorBaseString") ),
 	theVersion( iConfig.getParameter<double>("Version") ),
 	theMagField( iConfig.getParameter<double>("MagField") ),
 	theBarrelLocations( iConfig.getParameter<std::vector<std::string> >("barrelLocations") ),
 	theEndcapLocations( iConfig.getParameter<std::vector<std::string> >("endcapLocations") ),
-	theBarrelTemplateIds( iConfig.getParameter<std::vector<uint32_t> >("barrelTemplateIds") ),
-	theEndcapTemplateIds( iConfig.getParameter<std::vector<uint32_t> >("endcapTemplateIds") ),
+	theBarrelGenErrIds( iConfig.getParameter<std::vector<uint32_t> >("barrelGenErrIds") ),
+	theEndcapGenErrIds( iConfig.getParameter<std::vector<uint32_t> >("endcapGenErrIds") ),
 	useVectorIndices( iConfig.getUntrackedParameter<bool>("useVectorIndices",false) )
 {
 }
 
 
-SiPixelTemplateDBObjectUploader::~SiPixelTemplateDBObjectUploader()
+SiPixelGenErrorDBObjectUploader::~SiPixelGenErrorDBObjectUploader()
 {
 }
 
 void 
-SiPixelTemplateDBObjectUploader::beginJob()
+SiPixelGenErrorDBObjectUploader::beginJob()
 {
 }
 
 void
-SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::EventSetup& es)
+SiPixelGenErrorDBObjectUploader::analyze(const edm::Event& iEvent, const edm::EventSetup& es)
 {
-
 	//--- Make the POOL-ORA object to store the database object
-	SiPixelTemplateDBObject* obj = new SiPixelTemplateDBObject;
+	SiPixelGenErrorDBObject* obj = new SiPixelGenErrorDBObject;
 
 	// Local variables 
 	const char *tempfile;
 	int m;
 	
-	// Set the number of templates to be passed to the dbobject
-	obj->setNumOfTempl(theTemplateCalibrations.size());
-	// Set the version of the template dbobject - this is an external parameter
+	// Set the number of GenErrors to be passed to the dbobject
+	obj->setNumOfTempl(theGenErrorCalibrations.size());
+	// Set the version of the GenError dbobject - this is an external parameter
 	obj->setVersion(theVersion);
 
-	// Open the template file(s) 
+	// Open the GenError file(s) 
 	for(m=0; m< obj->numOfTempl(); ++m){
-		edm::FileInPath file( theTemplateCalibrations[m].c_str() );
+		edm::FileInPath file( theGenErrorCalibrations[m].c_str() );
 		tempfile = (file.fullPath()).c_str();
 		std::ifstream in_file(tempfile, std::ios::in);
 		if(in_file.is_open()){
-			edm::LogInfo("Template Info") << "Opened Template File: " << file.fullPath().c_str();
-			
+			edm::LogInfo("GenError Info") << "Opened GenError File: " << file.fullPath().c_str();
+
 			// Local variables 
 			char title_char[80], c;
-			SiPixelTemplateDBObject::char2float temp;
+			SiPixelGenErrorDBObject::char2float temp;
 			float tempstore;
 			int iter,j;
 			
-			// Templates contain a header char - we must be clever about storing this
+			// GenErrors contain a header char - we must be clever about storing this
 			for (iter = 0; (c=in_file.get()) != '\n'; ++iter) {
 				if(iter < 79) {title_char[iter] = c;}
 			}
 			if(iter > 78) {iter=78;}
 			title_char[iter+1] ='\n';
+			
 			for(j=0; j<80; j+=4) {
 				temp.c[0] = title_char[j];
 				temp.c[1] = title_char[j+1];
@@ -99,11 +98,11 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 		}
 		else {
 			// If file didn't open, report this
-			edm::LogError("SiPixelTemplateDBObjectUploader") << "Error opening File" << tempfile;
+			edm::LogError("SiPixelGenErrorDBObjectUploader") << "Error opening File" << tempfile;
 		}
 	}
 	
-	//get the event setup
+	//Get the event setup
 	edm::ESHandle<TrackerGeometry> pDD;
 	es.get<TrackerDigiGeometryRecord>().get( pDD );
 
@@ -115,9 +114,9 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 	// This tells if we are using Phase I geometry (may be needed for commented out Phase 1 variables)
 	//bool phase = pDD->isThere(GeomDetEnumerators::P1PXB) && pDD->isThere(GeomDetEnumerators::P1PXEC);
 
-	//Loop over the detector elements and put template IDs in place
-	for(TrackerGeometry::DetContainer::const_iterator it = pDD->detUnits().begin(); it != pDD->detUnits().end(); it++){
-		if( dynamic_cast<PixelGeomDetUnit const*>((*it))!=0){
+	//Loop over detector elements and put the GenError IDs in place
+	for(TrackerGeometry::DetUnitContainer::const_iterator it = pDD->detUnits().begin(); it != pDD->detUnits().end(); it++){
+			if( dynamic_cast<PixelGeomDetUnit const*>((*it))!=0){
 
 			// Here is the actual looping step over all DetIds:				
 			DetId detid=(*it)->geographicalId();
@@ -128,15 +127,14 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 			unsigned int iter;
 					
 			// Now we sort them into the Barrel and Endcap:
-			//Barrel Pixels first
-			if(detid.subdetId() == static_cast<int>(PixelSubdetector::PixelBarrel)) {
+			//Barrel pixels first
+			if(detid.subdetId() == static_cast<int>(PixelSubdetector::PixelBarrel)){
 				std::cout << "--- IN THE BARREL ---\n";
 
-				//Get the layer, ladder, and module corresponding to this detID
+				//Get the layer, ladder, and module corresponding to this DetID
 				layer  = tTopo->pxbLayer(detid.rawId());
 				ladder = tTopo->pxbLadder(detid.rawId());
 				module = tTopo->pxbModule(detid.rawId());
-				//std::cout<<"Layer: "<<layer<<", ladder: "<<ladder<<", module: "<<module<<", detID: "<<detid.rawId()<<"\n"; 
 				/*
 				// Comment these in if needed
 				PixelBarrelName pbn(detid, tTopo, phase);
@@ -153,7 +151,6 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 				for (iter=0;iter<theBarrelLocations.size();++iter) {
 					//get the string of this barrel location
 					std::string loc_string = theBarrelLocations[iter];
-					//std::cout<<"iter="<<iter<<", loc_string="<<loc_string<<"\n";
 					//find where the delimiters are
 					unsigned int first_delim_pos = loc_string.find("_");
 					unsigned int second_delim_pos = loc_string.find("_",first_delim_pos+1);
@@ -163,27 +160,25 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 					unsigned int checkmodule = (unsigned int)stoi(loc_string.substr(second_delim_pos+1,5));
 					//check them against the desired layer, ladder, and module
 					if (ladder==checkladder && layer==checklayer && module==checkmodule)
-					//if (iter==0)
-					//	//if they match, set the template ID
-						thisID=(short)theBarrelTemplateIds[iter];
+						//if they match, set the template ID
+						thisID=(short)theBarrelGenErrIds[iter];
 				}
 
-				if (thisID==10000 || ( ! (*obj).putTemplateID( detid.rawId(),thisID ) ) )
-				  std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";	
+				if (thisID==10000 || ( ! (*obj).putGenErrorID( detid.rawId(),thisID ) ))
+					std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";
 				// ----- debug:
 				std::cout<<"This is a barrel element with: layer "<<layer<<", ladder "<<ladder<<" and module "<<module<<".\n"; //Uncomment to read out exact position of each element.
 				// -----
 			}
 			//Now endcaps
-			if(detid.subdetId() == static_cast<int>(PixelSubdetector::PixelEndcap)){
+			else if(detid.subdetId() == static_cast<int>(PixelSubdetector::PixelEndcap)){
 				std::cout << "--- IN AN ENDCAP ---\n";
 
-				//Get the DetId's disk, blade, side, panel, and module
+				//Get the DetID's disk, blade, side, panel, and module
 				disk   = tTopo->pxfDisk(detid.rawId()); //1,2,3
 				blade  = tTopo->pxfBlade(detid.rawId()); //1-56 (Ring 1 is 1-22, Ring 2 is 23-56)
 				side   = tTopo->pxfSide(detid.rawId()); //side=1 for -z, 2 for +z
 				panel  = tTopo->pxfPanel(detid.rawId()); //panel=1,2	
-				//std::cout<<"Disk: "<<disk<<", blade: "<<blade<<", side: "<<side<<", panel: "<<panel<<", detID: "<<detid.rawId()<<"\n";
 				/*
 				// Comment these in if needed
 				PixelEndcapName pen(detid, tTopo, phase);
@@ -191,11 +186,10 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 				ring   = pen.ringName(); //1,2 This is for Phase I
 				*/
 				if (useVectorIndices) { 
-				  --disk; --blade; --side; --panel; 
+				  --disk; --blade; --side; --panel;
 				}
 
 				//Assign IDs
-
 				//Loop over all the endcap locations
 				for (iter=0;iter<theEndcapLocations.size();++iter) {
 					//get the string of this barrel location
@@ -211,25 +205,24 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 					unsigned int checkpanel = (unsigned int)stoi(loc_string.substr(third_delim_pos+1,5));
 					//check them against the desired disk, blade, side, panel, and module
 					if (disk==checkdisk && blade==checkblade && side==checkside && panel==checkpanel)
-					//if (iter==0)
-					//	//if they match, set the template ID
-						thisID=(short)theEndcapTemplateIds[iter];
+						//if they match, set the template ID
+						thisID=(short)theEndcapGenErrIds[iter];
 				}
 
-				if (thisID == 10000 || ( ! (*obj).putTemplateID( detid.rawId(),thisID ) ) )
-					std::cout << " Could not fill endcap det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", and panel "<<panel<<".\n";
+				if (thisID==10000 || ( ! (*obj).putGenErrorID( detid.rawId(),thisID ) ) )
+					std::cout << " Could not fill endcap det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<".\n";
 				// ----- debug:
-				std::cout<<"This is an endcap element with: side "<<side<<", disk "<<disk<<", blade "<<blade<<", and panel "<<panel<<".\n"; //Uncomment to read out exact position of each element.
+				std::cout<<"This is an endcap element with: side "<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<".\n"; //Uncomment to read out exact position of each element.
 				// -----
 			}
 			else {
 				std::cout<<" Well this is weird. SubdetID = "<<detid.subdetId()<<"\n";
 			}
 
-			//Print out the assignment of this detID
+			//Print out the assignment of this DetID
 			short mapnum;
 			std::cout<<"checking map:\n";
-			mapnum = (*obj).getTemplateID( detid.rawId());
+			mapnum = (*obj).getGenErrorID( detid.rawId());
 			std::cout<<"The DetID: "<<detid.rawId()<<" is mapped to the template: "<<mapnum<<".\n\n";
 
 		}
@@ -239,14 +232,14 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 	edm::Service<cond::service::PoolDBOutputService> poolDbService;
 	if( !poolDbService.isAvailable() ) // Die if not available
 		throw cms::Exception("NotAvailable") << "PoolDBOutputService not available";
-	if(poolDbService->isNewTagRequest("SiPixelTemplateDBObjectRcd"))
-		poolDbService->writeOne( obj, poolDbService->beginOfTime(), "SiPixelTemplateDBObjectRcd");
+	if(poolDbService->isNewTagRequest("SiPixelGenErrorDBObjectRcd"))
+		poolDbService->writeOne( obj, poolDbService->beginOfTime(), "SiPixelGenErrorDBObjectRcd");
 	else
-		poolDbService->writeOne( obj, poolDbService->currentTime(), "SiPixelTemplateDBObjectRcd");
+		poolDbService->writeOne( obj, poolDbService->currentTime(), "SiPixelGenErrorDBObjectRcd");
 }
 
 void 
-SiPixelTemplateDBObjectUploader::endJob()
+SiPixelGenErrorDBObjectUploader::endJob()
 {
 }
 
