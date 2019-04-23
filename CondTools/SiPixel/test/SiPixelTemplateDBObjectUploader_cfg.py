@@ -5,55 +5,55 @@ import csv
 options = opts.VarParsing ('standard')
 
 options.register('MagField',
-    			 None,
-    			 opts.VarParsing.multiplicity.singleton,
-    			 opts.VarParsing.varType.float,
-    			 'Magnetic field value in Tesla')
+				 None,
+				 opts.VarParsing.multiplicity.singleton,
+				 opts.VarParsing.varType.float,
+				 'Magnetic field value in Tesla')
 options.register('Year',
-    			 None,
-    			 opts.VarParsing.multiplicity.singleton,
-    			 opts.VarParsing.varType.string,
-    			 'Current year for versioning')
+				 None,
+				 opts.VarParsing.multiplicity.singleton,
+				 opts.VarParsing.varType.string,
+				 'Current year for versioning')
 options.register('Version',
-    			 None,
-    			 opts.VarParsing.multiplicity.singleton,
-    			 opts.VarParsing.varType.string,
-    			 'Template DB object version')
+				 None,
+				 opts.VarParsing.multiplicity.singleton,
+				 opts.VarParsing.varType.string,
+				 'Template DB object version')
 options.register('Append',
-    			 None,
-    			 opts.VarParsing.multiplicity.singleton,
-    			 opts.VarParsing.varType.string,
-    			 'Any additional string to add to the filename, i.e. "bugfix", etc.')
+				 None,
+				 opts.VarParsing.multiplicity.singleton,
+				 opts.VarParsing.varType.string,
+				 'Any additional string to add to the filename, i.e. "bugfix", etc.')
 options.register('Map',
-    			 '../data/template1D_IOV13/IOV13_map.csv',
-    			 opts.VarParsing.multiplicity.singleton,
-    			 opts.VarParsing.varType.string,
-    			 'Path to map file')
+				 '../data/template1D_IOV13/IOV13_map.csv',
+				 opts.VarParsing.multiplicity.singleton,
+				 opts.VarParsing.varType.string,
+				 'Path to map file')
 options.register('Delimiter',
-    			 ',',
-    			 opts.VarParsing.multiplicity.singleton,
-    			 opts.VarParsing.varType.string,
-    			 'Delimiter in csv file')
+				 ',',
+				 opts.VarParsing.multiplicity.singleton,
+				 opts.VarParsing.varType.string,
+				 'Delimiter in csv file')
 options.register('Quotechar',
-    			 '"',
-    			 opts.VarParsing.multiplicity.singleton,
-    			 opts.VarParsing.varType.string,
-    			 'Quotechar in csv file')
+				 '"',
+				 opts.VarParsing.multiplicity.singleton,
+				 opts.VarParsing.varType.string,
+				 'Quotechar in csv file')
 options.register('TemplateFilePath',
-    			 'CondTools/SiPixel/data',
-    			 opts.VarParsing.multiplicity.singleton,
-    			 opts.VarParsing.varType.string,
-    			 'Location of template files')
+				 'CondTools/SiPixel/data',
+				 opts.VarParsing.multiplicity.singleton,
+				 opts.VarParsing.varType.string,
+				 'Location of template files')
 options.register('GlobalTag',
-    			 'auto:run2_data',
-    			 opts.VarParsing.multiplicity.singleton,
-    			 opts.VarParsing.varType.string,
-    			 'Global tag for this run')
+				 'auto:run2_data',
+				 opts.VarParsing.multiplicity.singleton,
+				 opts.VarParsing.varType.string,
+				 'Global tag for this run')
 options.register('useVectorIndices',
-    			 True,
-    			 opts.VarParsing.multiplicity.singleton,
-    			 opts.VarParsing.varType.bool,
-    			 'Switch on in case Morris uses vector indices in csv file, eg. [0,(N-1)] instead of [1,N]')
+				 True,
+				 opts.VarParsing.multiplicity.singleton,
+				 opts.VarParsing.varType.bool,
+				 'Switch on in case Morris uses vector indices in csv file, eg. [0,(N-1)] instead of [1,N]')
 options.parseArguments()
 
 MagFieldValue = 10.*options.MagField #code needs it in deciTesla
@@ -182,33 +182,33 @@ sqlitefilename = 'sqlite_file:'+template_base+'.db'
 print '\nUploading %s with record SiPixelTemplateDBObjectRcd in file %s\n' % (template_base,sqlitefilename)
 
 process.source = cms.Source("EmptyIOVSource",
-                            timetype = cms.string('runnumber'),
-                            firstValue = cms.uint64(1),
-                            lastValue = cms.uint64(1),
-                            interval = cms.uint64(1)
-                            )
+							timetype = cms.string('runnumber'),
+							firstValue = cms.uint64(1),
+							lastValue = cms.uint64(1),
+							interval = cms.uint64(1)
+							)
 process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(1))
 process.PoolDBOutputService = cms.Service("PoolDBOutputService",
-                                          DBParameters = cms.PSet(messageLevel = cms.untracked.int32(0),
-    															  authenticationPath = cms.untracked.string('.')
-    															  ),
-                                          timetype = cms.untracked.string('runnumber'),
-                                          connect = cms.string(sqlitefilename),
-                                          toPut = cms.VPSet(cms.PSet(record = cms.string('SiPixelTemplateDBObjectRcd'),
-    																 tag = cms.string(template_base)
+										  DBParameters = cms.PSet(messageLevel = cms.untracked.int32(0),
+																  authenticationPath = cms.untracked.string('.')
+																  ),
+										  timetype = cms.untracked.string('runnumber'),
+										  connect = cms.string(sqlitefilename),
+										  toPut = cms.VPSet(cms.PSet(record = cms.string('SiPixelTemplateDBObjectRcd'),
+																	 tag = cms.string(template_base)
 																	 )
-                                          				    )
-                                          )
+															)
+										  )
 process.uploader = cms.EDAnalyzer("SiPixelTemplateDBObjectUploader",
-                                  siPixelTemplateCalibrations = cms.vstring(template_filenames),
-                                  theTemplateBaseString = cms.string(template_base),
-                                  Version = cms.double("3.0"),
-                                  MagField = cms.double(MagFieldValue),
-                                  barrelLocations = cms.vstring(barrel_locations),
-                                  endcapLocations = cms.vstring(endcap_locations),
-                                  barrelTemplateIds = cms.vuint32(barrel_template_IDs),
-                                  endcapTemplateIds = cms.vuint32(endcap_template_IDs),
-                                  useVectorIndices  = cms.untracked.bool(options.useVectorIndices),
+								  siPixelTemplateCalibrations = cms.vstring(template_filenames),
+								  theTemplateBaseString = cms.string(template_base),
+								  Version = cms.double("3.0"),
+								  MagField = cms.double(MagFieldValue),
+								  barrelLocations = cms.vstring(barrel_locations),
+								  endcapLocations = cms.vstring(endcap_locations),
+								  barrelTemplateIds = cms.vuint32(barrel_template_IDs),
+								  endcapTemplateIds = cms.vuint32(endcap_template_IDs),
+								  useVectorIndices  = cms.untracked.bool(options.useVectorIndices),
 								 )
 process.myprint = cms.OutputModule("AsciiOutputModule")
 process.p = cms.Path(process.uploader)

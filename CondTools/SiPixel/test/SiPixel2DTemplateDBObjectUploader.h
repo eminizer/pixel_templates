@@ -1,5 +1,5 @@
-#ifndef CondTools_SiPixel_SiPixel2DTemplateDBObjectUploader_h
-#define CondTools_SiPixel_SiPixel2DTemplateDBObjectUploader_h
+#ifndef CondTools_SiPixel_Si2DPixelTemplateDBObjectUploader_h
+#define CondTools_SiPixel_Si2DPixelTemplateDBObjectUploader_h
 
 #include <memory>
 
@@ -28,10 +28,13 @@ class SiPixel2DTemplateDBObjectUploader : public edm::EDAnalyzer {
 			
 			vstring theTemplateCalibrations ;
 			std::string theTemplateBaseString;
-			float theVersion;
-			float theMagField;
-			std::vector<uint32_t> theDetIds;
-			std::vector<uint32_t> theTemplIds;
+			double theVersion;
+			double theMagField;
+			vstring theBarrelLocations;
+			vstring theEndcapLocations;
+			std::vector<uint32_t> theBarrelTemplateIds;
+			std::vector<uint32_t> theEndcapTemplateIds;
+			bool useVectorIndices;
 		
 };
 
