@@ -214,9 +214,8 @@ SiPixel2DTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::
 						//if they match, set the template ID
 						thisID=(short)theEndcapTemplateIds[iter];
 				}
-
 				if (thisID == 10000 || ( ! (*obj).putTemplateID( detid.rawId(),thisID ) ) )
-					std::cout << " Could not fill endcap det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
+					std::cout << " Could not fill endcap det side "<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n";
 				// ----- debug:
 				std::cout<<"This is an endcap element with: side "<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<" and module "<<module<<".\n"; //Uncomment to read out exact position of each element.
 				// -----

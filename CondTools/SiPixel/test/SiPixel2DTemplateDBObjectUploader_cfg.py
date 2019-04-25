@@ -195,7 +195,7 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, options.GlobalTag, '')
 
-template_base = 'SiPixel2DTemplateDBObject_phase1_'+MagFieldString+'T_'+options.Year+'_v'+version
+template_base = 'SiPixel2DTemplateDBObject_'+MagFieldString+'T_'+options.Year+'_v'+version
 if options.numerator==True :
 	template_base+='_num'
 elif options.denominator==True :
