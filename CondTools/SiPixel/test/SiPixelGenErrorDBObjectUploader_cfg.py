@@ -5,7 +5,7 @@ import csv
 options = opts.VarParsing ('standard')
 
 options.register('MagField',
-					 None,
+					 3.8,
 					 opts.VarParsing.multiplicity.singleton,
 					 opts.VarParsing.varType.float,
 					 'Magnetic field value in Tesla')
@@ -24,6 +24,11 @@ options.register('Append',
 					 opts.VarParsing.multiplicity.singleton,
 					 opts.VarParsing.varType.string,
 					 'Any additional string to add to the filename, i.e. "bugfix", etc.')
+options.register('Fullname',
+    			 None,
+    			 opts.VarParsing.multiplicity.singleton,
+    			 opts.VarParsing.varType.string,
+    			 'The entire filename in case the options above are insufficient, i.e. "SiPixelGenErrorDBObject_phase1_EoR3_HV600_Tr2000", etc.')
 options.register('Map',
 					 '../data/template1D_IOV0_phase1_MC/IOV0_phase1_MC_map.csv',
 					 opts.VarParsing.multiplicity.singleton,
@@ -172,9 +177,13 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, options.GlobalTag, '')
 
-generror_base = 'SiPixelGenErrorDBObject_phase1_'+MagFieldString+'T_'+options.Year+'_v'+version
-if options.Append!=None :
-	generror_base+='_'+options.Append
+generror_base=''
+if options.Fullname!=None :
+	generror_base=options.Fullname
+else :
+	generror_base = 'SiPixelGenErrorDBObject_phase1_'+MagFieldString+'T_'+options.Year+'_v'+version
+	if options.Append!=None :
+		generror_base+='_'+options.Append
 #output SQLite filename
 sqlitefilename = 'sqlite_file:'+generror_base+'.db'
 
