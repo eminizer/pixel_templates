@@ -3,7 +3,7 @@ import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
 
-process = cms.Process('reRECO',eras.Run2_2016)
+process = cms.Process('reRECO',eras.Run2_2018)
 
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
@@ -43,7 +43,8 @@ process.source = cms.Source("PoolSource",
         #'/store/data/Run2016G/ZeroBias/RAW/v1/000/279/767/00000/BE55F91E-C86E-E611-8261-02163E014473.root' #2016 IOV 3
         #'/store/data/Run2016G/SingleMuon/RAW/v1/000/280/385/00001/FCA61558-EF76-E611-9077-02163E0146FA.root' #2016 IOV 3 on disk
         #'/store/data/Run2016H/ZeroBias/RAW/v1/000/283/308/00000/0AB91CC7-A093-E611-B261-FA163E921635.root' #2016 IOV 4
-        '/store/data/Run2016H/DoubleMuon/RAW/v1/000/284/068/00000/FA8D247F-519F-E611-B89C-02163E01454C.root' #2016 IOV 4 on disk
+        #'/store/data/Run2016H/DoubleMuon/RAW/v1/000/284/068/00000/FA8D247F-519F-E611-B89C-02163E01454C.root' #2016 IOV 4 on disk
+        '/store/data/Run2018B/ZeroBias/RAW/v1/000/317/475/00000/C6992C95-EF68-E811-B438-FA163E1CD30F.root' #2018 last IOV
 ),
     secondaryFileNames = cms.untracked.vstring()
 )
@@ -78,21 +79,22 @@ from Configuration.AlCa.GlobalTag import GlobalTag
 #process.GlobalTag = GlobalTag(process.GlobalTag, '103X_dataRun2_Prompt_Candidate_2018_10_26_20_13_12', '')
 #process.GlobalTag = GlobalTag(process.GlobalTag, '103X_dataRun2_Prompt_v3', '')
 #process.GlobalTag = GlobalTag(process.GlobalTag, '104X_dataRun2_Candidate_2019_01_26_09_40_32', '')
-process.GlobalTag = GlobalTag(process.GlobalTag, '106X_dataRun2_v17', '')
+#process.GlobalTag = GlobalTag(process.GlobalTag, '106X_dataRun2_v17', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '106X_dataRun2_v18', '')
 # For custom pixel template sqlite files
 process.GlobalTag.toGet = cms.VPSet (
     cms.PSet(record = cms.string('SiPixel2DTemplateDBObjectRcd'),
              label = cms.untracked.string("numerator"),
-             tag = cms.string('SiPixel2DTemplateDBObject_38T_2016_ultralegacy_v4_num'),
+             tag = cms.string('SiPixel2DTemplateDBObject_phase1_2018UL_HV600_num'),
              connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS')
              ),
-    cms.PSet(record = cms.string('SiPixel2DTemplateDBObjectRcd'),
-             label = cms.untracked.string("denominator"),
-             tag = cms.string('SiPixel2DTemplateDBObject_38T_2016_ultralegacy_v1_den_unirradiated'),
-             connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS')
-             ),
+    #cms.PSet(record = cms.string('SiPixel2DTemplateDBObjectRcd'),
+    #         label = cms.untracked.string("denominator"),
+    #         tag = cms.string('SiPixel2DTemplateDBObject_38T_2016_ultralegacy_v1_den_unirradiated'),
+    #         connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS')
+    #         ),
     cms.PSet(record = cms.string('SiPixelTemplateDBObjectRcd'),
-             tag = cms.string('SiPixelTemplateDBObject_38T_2016_ultralegacy_v4'),
+             tag = cms.string('SiPixelTemplateDBObject_phase1_2018UL_HV600'),
              connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS')
              )
     )
