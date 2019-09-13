@@ -107,6 +107,11 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 	edm::ESHandle<TrackerGeometry> pDD;
 	es.get<TrackerDigiGeometryRecord>().get( pDD );
 
+	//Use the TrackerGeometry class for getting the subdetector objects from the subdetector IDs
+	edm::ESHandle<TrackerGeometry> tGeoHandle;
+	es.get<TrackerDigiGeometryRecord>().get(tGeoHandle);
+	const TrackerGeometry* tGeo = tGeoHandle.product();
+
 	// Use the TrackerTopology class for layer/disk etc. number
 	edm::ESHandle<TrackerTopology> tTopoHandle;
 	es.get<TrackerTopologyRcd>().get(tTopoHandle);
@@ -126,10 +131,16 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 			// unsigned int shl=0, sec=0, half=0, flipped=0, ring=0;
 			short thisID = 10000;
 			unsigned int iter;
+
+			////If it's not in the inner tracker, skip it
+			//if (!(GeomDetEnumerators::isInnerTracker(GeomDetEnumerators::subDetGeom[detid.subdetId()]))) {
+			//	std::cout << "raw detID = " << detid.rawId() << ", subdetId = " << detid.subdetId()  << ", not recognized as inner tracker and skipped.";
+			//	continue;
+			//}
 					
 			// Now we sort them into the Barrel and Endcap:
 			//Barrel Pixels first
-			if(detid.subdetId() == static_cast<int>(PixelSubdetector::PixelBarrel)) {
+			if(tGeo->geomDetSubDetector(detid.subdetId()) == GeomDetEnumerators::P2PXB) {
 				std::cout << "--- IN THE BARREL ---\n";
 
 				//Get the layer, ladder, and module corresponding to this detID
@@ -169,13 +180,13 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 				}
 
 				if (thisID==10000 || ( ! (*obj).putTemplateID( detid.rawId(),thisID ) ) )
-				  std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";	
+				  std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<" (thisID = "<<thisID<<")\n";	
 				// ----- debug:
 				std::cout<<"This is a barrel element with: layer "<<layer<<", ladder "<<ladder<<" and module "<<module<<".\n"; //Uncomment to read out exact position of each element.
 				// -----
 			}
 			//Now endcaps
-			if(detid.subdetId() == static_cast<int>(PixelSubdetector::PixelEndcap)){
+			else if(tGeo->geomDetSubDetector(detid.subdetId()) == GeomDetEnumerators::P2PXEC) {
 				std::cout << "--- IN AN ENDCAP ---\n";
 
 				//Get the DetId's disk, blade, side, panel, and module
@@ -217,7 +228,7 @@ SiPixelTemplateDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 				}
 
 				if (thisID == 10000 || ( ! (*obj).putTemplateID( detid.rawId(),thisID ) ) )
-					std::cout << " Could not fill endcap det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", and panel "<<panel<<".\n";
+					std::cout << " Could not fill endcap det unit "<<side<<", disk "<<disk<<", blade "<<blade<<", and panel "<<panel<<". (thisID = "<<thisID<<")\n";
 				// ----- debug:
 				std::cout<<"This is an endcap element with: side "<<side<<", disk "<<disk<<", blade "<<blade<<", and panel "<<panel<<".\n"; //Uncomment to read out exact position of each element.
 				// -----

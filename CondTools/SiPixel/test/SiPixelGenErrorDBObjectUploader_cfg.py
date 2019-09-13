@@ -54,6 +54,11 @@ options.register('useVectorIndices',
 					 opts.VarParsing.multiplicity.singleton,
 					 opts.VarParsing.varType.bool,
 					 'Switch on in case Morris uses vector indices in csv file, eg. [0,(N-1)] instead of [1,N]')
+options.register('geometry',
+                 'T5',
+                 opts.VarParsing.multiplicity.singleton,
+                 opts.VarParsing.varType.string,
+                 'Tracker Geometry Default = T5')
 options.parseArguments()
 
 MagFieldValue = 10.*options.MagField #code needs it in deciTesla
@@ -166,13 +171,38 @@ from Configuration.StandardSequences.Eras import eras
 process = cms.Process("SiPixelGenErrorDBUpload",eras.Phase2)#C2)
 process.load("CondCore.CondDB.CondDB_cfi")
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.load('Configuration.Geometry.GeometryExtended2023D17Reco_cff')
-process.load('Configuration.Geometry.GeometryExtended2023D17_cff')
+
+geometry_cff = ''
+recoGeometry_cff = ''
+tGeometry = options.geometry
+if tGeometry == 'T6':
+    geometry_cff = 'GeometryExtended2026D35_cff'
+    recoGeometry_cff = 'GeometryExtended2026D35Reco_cff'
+elif tGeometry == 'T14':
+    geometry_cff = 'GeometryExtended2026D43_cff'
+    recoGeometry_cff = 'GeometryExtended2026D43Reco_cff'
+elif tGeometry == 'T15':
+    geometry_cff = 'GeometryExtended2026D45_cff'
+    recoGeometry_cff = 'GeometryExtended2026D45Reco_cff'
+elif tGeometry == 'T16':
+    geometry_cff = 'GeometryExtended2026D48_cff'
+    recoGeometry_cff = 'GeometryExtended2026D48Reco_cff'
+else:
+    print "Unknown tracker geometry"
+    print "What are you doing ?!?!?!?!"
+    exit(1)
+geometry_cff = 'Configuration.Geometry.' + geometry_cff
+recoGeometry_cff = 'Configuration.Geometry.' + recoGeometry_cff
+process.load(geometry_cff)
+process.load(recoGeometry_cff)
+
+global_tag_name = options.GlobalTag+'_'+tGeometry
+
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, options.GlobalTag, '')
+process.GlobalTag = GlobalTag(process.GlobalTag, global_tag_name, '')
 
-generror_base = 'SiPixelGenErrorDBObject_phase2_'+MagFieldString+'T_'+options.Year+'_v'+version
+generror_base = 'SiPixelGenErrorDBObject_phase2_'+tGeometry+'_v'+version
 if options.Append!=None :
 	generror_base+='_'+options.Append
 #output SQLite filename
@@ -181,35 +211,35 @@ sqlitefilename = 'sqlite_file:'+generror_base+'.db'
 print '\nUploading %s with record SiPixelGenErrorDBObjectRcd in file %s\n' % (generror_base,sqlitefilename)
 
 process.source = cms.Source("EmptyIOVSource",
-														timetype = cms.string('runnumber'),
-														firstValue = cms.uint64(1),
-														lastValue = cms.uint64(1),
-														interval = cms.uint64(1)
-														)
+							timetype = cms.string('runnumber'),
+							firstValue = cms.uint64(1),
+							lastValue = cms.uint64(1),
+							interval = cms.uint64(1)
+							)
 process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(1))
 process.PoolDBOutputService = cms.Service("PoolDBOutputService",
-																					DBParameters = cms.PSet(messageLevel = cms.untracked.int32(0),
-																		authenticationPath = cms.untracked.string('.')
-																		),
-																					timetype = cms.untracked.string('runnumber'),
-																					connect = cms.string(sqlitefilename),
-																					toPut = cms.VPSet(cms.PSet(record = cms.string('SiPixelGenErrorDBObjectRcd'),
-																		 tag = cms.string(generror_base)
-																		 )
-																										)
-																					)
+										  DBParameters = cms.PSet(messageLevel = cms.untracked.int32(0),
+																  authenticationPath = cms.untracked.string('.')
+																),
+										  timetype = cms.untracked.string('runnumber'),
+										  connect = cms.string(sqlitefilename),
+										  toPut = cms.VPSet(cms.PSet(record = cms.string('SiPixelGenErrorDBObjectRcd'),
+																	 tag = cms.string(generror_base)
+																	)
+															)
+										)
 process.uploader = cms.EDAnalyzer("SiPixelGenErrorDBObjectUploader",
-																	siPixelGenErrorCalibrations = cms.vstring(template_filenames),
-																	theGenErrorBaseString = cms.string(generror_base),
-																	Version = cms.double(3.0),
-																	MagField = cms.double(MagFieldValue),
-																	detIds = cms.vuint32(1,2), #0 is for all, 1 is Barrel, 2 is EndCap
-																	barrelLocations = cms.vstring(barrel_locations),
-																	endcapLocations = cms.vstring(endcap_locations),
-																	barrelGenErrIds = cms.vuint32(barrel_generr_IDs),
-																	endcapGenErrIds = cms.vuint32(endcap_generr_IDs),
-																	useVectorIndices  = cms.untracked.bool(options.useVectorIndices),
-									)
+								  siPixelGenErrorCalibrations = cms.vstring(template_filenames),
+								  theGenErrorBaseString = cms.string(generror_base),
+								  Version = cms.double(3.0),
+								  MagField = cms.double(MagFieldValue),
+								  detIds = cms.vuint32(1,2), #0 is for all, 1 is Barrel, 2 is EndCap
+								  barrelLocations = cms.vstring(barrel_locations),
+								  endcapLocations = cms.vstring(endcap_locations),
+								  barrelGenErrIds = cms.vuint32(barrel_generr_IDs),
+								  endcapGenErrIds = cms.vuint32(endcap_generr_IDs),
+								  useVectorIndices  = cms.untracked.bool(options.useVectorIndices),
+								)
 process.myprint = cms.OutputModule("AsciiOutputModule")
 process.p = cms.Path(process.uploader)
 process.CondDB.connect = sqlitefilename

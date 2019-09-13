@@ -107,6 +107,11 @@ SiPixelGenErrorDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 	edm::ESHandle<TrackerGeometry> pDD;
 	es.get<TrackerDigiGeometryRecord>().get( pDD );
 
+	//Use the TrackerGeometry class for getting the subdetector objects from the subdetector IDs
+	edm::ESHandle<TrackerGeometry> tGeoHandle;
+	es.get<TrackerDigiGeometryRecord>().get(tGeoHandle);
+	const TrackerGeometry* tGeo = tGeoHandle.product();
+
 	// Use the TrackerTopology class for layer/disk etc. number
 	edm::ESHandle<TrackerTopology> tTopoHandle;
 	es.get<TrackerTopologyRcd>().get(tTopoHandle);
@@ -129,7 +134,7 @@ SiPixelGenErrorDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 					
 			// Now we sort them into the Barrel and Endcap:
 			//Barrel pixels first
-			if(detid.subdetId() == static_cast<int>(PixelSubdetector::PixelBarrel)){
+			if(tGeo->geomDetSubDetector(detid.subdetId()) == GeomDetEnumerators::P2PXB) {
 				std::cout << "--- IN THE BARREL ---\n";
 
 				//Get the layer, ladder, and module corresponding to this DetID
@@ -166,13 +171,13 @@ SiPixelGenErrorDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 				}
 
 				if (thisID==10000 || ( ! (*obj).putGenErrorID( detid.rawId(),thisID ) ))
-					std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<"\n";
+					std::cout << " Could not fill barrel layer "<<layer<<", module "<<module<<" (thisID = "<<thisID<<")\n";
 				// ----- debug:
 				std::cout<<"This is a barrel element with: layer "<<layer<<", ladder "<<ladder<<" and module "<<module<<".\n"; //Uncomment to read out exact position of each element.
 				// -----
 			}
 			//Now endcaps
-			else if(detid.subdetId() == static_cast<int>(PixelSubdetector::PixelEndcap)){
+			else if(tGeo->geomDetSubDetector(detid.subdetId()) == GeomDetEnumerators::P2PXEC) {
 				std::cout << "--- IN AN ENDCAP ---\n";
 
 				//Get the DetID's disk, blade, side, panel, and module
@@ -211,7 +216,7 @@ SiPixelGenErrorDBObjectUploader::analyze(const edm::Event& iEvent, const edm::Ev
 				}
 
 				if (thisID==10000 || ( ! (*obj).putGenErrorID( detid.rawId(),thisID ) ) )
-					std::cout << " Could not fill endcap det unit"<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<".\n";
+					std::cout << " Could not fill endcap det unit "<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<". (thisID = "<<thisID<<")\n";
 				// ----- debug:
 				std::cout<<"This is an endcap element with: side "<<side<<", disk "<<disk<<", blade "<<blade<<", panel "<<panel<<".\n"; //Uncomment to read out exact position of each element.
 				// -----

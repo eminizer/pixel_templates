@@ -67,8 +67,3 @@ process.reader = cms.EDAnalyzer("SiPixelGenErrorDBObjectReader",
 
 process.p = cms.Path(process.reader)
 
-
-
-
-
-

@@ -54,6 +54,11 @@ options.register('useVectorIndices',
     			 opts.VarParsing.multiplicity.singleton,
     			 opts.VarParsing.varType.bool,
     			 'Switch on in case Morris uses vector indices in csv file, eg. [0,(N-1)] instead of [1,N]')
+options.register('geometry',
+                 'T5',
+                 opts.VarParsing.multiplicity.singleton,
+                 opts.VarParsing.varType.string,
+                 'Tracker Geometry Default = T5')
 options.parseArguments()
 
 MagFieldValue = 10.*options.MagField #code needs it in deciTesla
@@ -166,13 +171,38 @@ from Configuration.StandardSequences.Eras import eras
 process = cms.Process("SiPixelTemplateDBUpload",eras.Phase2)#C2)
 process.load("CondCore.CondDB.CondDB_cfi")
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.load('Configuration.Geometry.GeometryExtended2023D17Reco_cff')
-process.load('Configuration.Geometry.GeometryExtended2023D17_cff')
+
+geometry_cff = ''
+recoGeometry_cff = ''
+tGeometry = options.geometry
+if tGeometry == 'T6':
+    geometry_cff = 'GeometryExtended2026D35_cff'
+    recoGeometry_cff = 'GeometryExtended2026D35Reco_cff'
+elif tGeometry == 'T14':
+    geometry_cff = 'GeometryExtended2026D43_cff'
+    recoGeometry_cff = 'GeometryExtended2026D43Reco_cff'
+elif tGeometry == 'T15':
+    geometry_cff = 'GeometryExtended2026D45_cff'
+    recoGeometry_cff = 'GeometryExtended2026D45Reco_cff'
+elif tGeometry == 'T16':
+    geometry_cff = 'GeometryExtended2026D48_cff'
+    recoGeometry_cff = 'GeometryExtended2026D48Reco_cff'
+else:
+    print "Unknown tracker geometry"
+    print "What are you doing ?!?!?!?!"
+    exit(1)
+geometry_cff = 'Configuration.Geometry.' + geometry_cff
+recoGeometry_cff = 'Configuration.Geometry.' + recoGeometry_cff
+process.load(geometry_cff)
+process.load(recoGeometry_cff)
+
+global_tag_name = options.GlobalTag+'_'+tGeometry
+
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, options.GlobalTag, '')
+process.GlobalTag = GlobalTag(process.GlobalTag, global_tag_name, '')
 
-template_base = 'SiPixelTemplateDBObject_phase2_'+MagFieldString+'T_'+options.Year+'_v'+version
+template_base = 'SiPixelTemplateDBObject_phase2_'+tGeometry+'_v'+version
 if options.Append!=None :
 	template_base+='_'+options.Append
 #output SQLite filename

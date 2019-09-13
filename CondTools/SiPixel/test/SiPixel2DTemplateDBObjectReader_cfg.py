@@ -87,8 +87,3 @@ process.reader = cms.EDAnalyzer("SiPixel2DTemplateDBObjectReader",
 
 process.p = cms.Path(process.reader)
 
-
-
-
-
-
