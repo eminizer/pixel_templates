@@ -10,14 +10,14 @@ Currently not yet integrated into CMSSW, so this is very kludge-y and does not r
 This code just adds a few files to CondTools in CMSSW, so until it's incorporated this will be a bit nasty. 
 
 ```Shell
-setenv SCRAM_ARCH slc6_amd64_gcc630
-cmsrel CMSSW_10_1_0
-cd CMSSW_10_1_0/src/
+setenv SCRAM_ARCH slc7_amd64_gcc700
+cmsrel CMSSW_11_0_0_pre7
+cd CMSSW_11_0_0_pre7/src/
 cmsenv
-git cms-addpkg CondTools
-git cms-addpkg Configuration
-git cms-addpkg Geometry
-git cms-addpkg DataFormats
+git-cms-addpkg CondTools
+git-cms-addpkg Configuration
+git-cms-addpkg DataFormats
+git-cms-addpkg Geometry
 git clone https://github.com/eminizer/pixel_templates
 cd pixel_templates
 git checkout phase2_edits
