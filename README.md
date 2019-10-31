@@ -1,7 +1,7 @@
 # SiPixel Template/GenError Uploader
 ====================================
 
-This code produces pixel template and generr sqlite db files by uploading template files and associating each detID with a template.
+This code produces (1D and 2D) pixel template and generr sqlite db files by uploading template files and associating each detID with a template.
 
 Checkout Instructions & Environment setup
 =========================================
@@ -94,4 +94,4 @@ Work to be Done
 Maintenance
 ===========
 
-This work is currently maintained by Nick Eminizer at Johns Hopkins University (nick.eminizer@gmail.com) and represents a service work contribution to the CMS Collaboration.
+This work has been maintained to this point by Maggie Eminizer at Johns Hopkins University (margaret.eminizer@gmail.com) and represents a service work contribution to the CMS Collaboration.
