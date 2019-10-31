@@ -1,7 +1,7 @@
 # SiPixel Template/GenError Uploader
 ====================================
 
-This code produces pixel template and generr sqlite db files by uploading template files and associating each detID with a template.
+This code produces (1D and 2D) pixel template and generr sqlite db files by uploading template files and associating each detID with a template.
 
 Checkout Instructions & Environment setup
 =========================================
@@ -67,6 +67,8 @@ Command Line Options
 
 4) Append: Anything to add to the end of the SQLite filenames, like "bugfix"
 
+5) Fullname: In case the options above are insufficient to title the files as desired, use this flag to name them anything you like.
+
 5) Map: Full path to the Map file mentioned above (this one does have a default, so if you've changed something, use this option)
 
 6) GlobalTag: GlobalTag for data run (default is set for this one too, so change it if necessary)
@@ -89,4 +91,4 @@ Work to be Done
 Maintenance
 ===========
 
-This work is currently maintained by Nick Eminizer at Johns Hopkins University (nick.eminizer@gmail.com) and represents a service work contribution to the CMS Collaboration.
+This work has been maintained to this point by Maggie Eminizer at Johns Hopkins University (margaret.eminizer@gmail.com) and represents a service work contribution to the CMS Collaboration.
